@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Банковский Радар · ПФ-мониторинг</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+[data-theme="light"]{--green:#6DBE45;--green-dark:#4fa32e;--green-bg:#f0f9ea;--green-mid:#d4edbc;--bg:#f5f6f8;--surface:#ffffff;--surface2:#f9fafb;--border:#e8eaed;--border2:#d1d5db;--text:#1a1d23;--text2:#6b7280;--text3:#9ca3af;--red:#ef4444;--red-bg:#fef2f2;--yellow:#d97706;--yellow-bg:#fffbeb;--blue:#2563eb;--blue-bg:#eff6ff;--shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow:0 4px 16px rgba(0,0,0,.08);--row-alt:#fafbfc;--row-hover:#f3f4f6;--toggle-bg:#e8eaed}
+[data-theme="dark"]{--green:#6DBE45;--green-dark:#8fd465;--green-bg:rgba(109,190,69,.12);--green-mid:rgba(109,190,69,.2);--bg:#0d0f11;--surface:#131619;--surface2:#1a1e22;--border:#252a2f;--border2:#2e3540;--text:#e2e6ea;--text2:#8a9099;--text3:#4e5560;--red:#f87171;--red-bg:rgba(239,68,68,.12);--yellow:#fbbf24;--yellow-bg:rgba(245,158,11,.12);--blue:#60a5fa;--blue-bg:rgba(37,99,235,.12);--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow:0 4px 16px rgba(0,0,0,.3);--row-alt:rgba(255,255,255,.02);--row-hover:rgba(255,255,255,.04);--toggle-bg:#252a2f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);transition:background .25s}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.logo-divider{width:1.5px;height:24px;background:var(--green);border-radius:1px}
+.logo-text{font-size:15px;font-weight:600}
+.logo-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.live-badge{display:flex;align-items:center;gap:6px;background:var(--green-bg);border:1px solid var(--green-mid);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:500;color:var(--green-dark)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+#upd-time{font-size:11px;color:var(--text3)}
+.theme-toggle{width:36px;height:36px;border-radius:50%;background:var(--toggle-bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--green);background:var(--green-bg)}
+.main{max-width:1360px;margin:0 auto;padding:20px 16px}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:var(--surface);border-radius:14px;padding:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border);position:relative;overflow:hidden;transition:box-shadow .2s,background .25s}
+.kpi:hover{box-shadow:var(--shadow)}
+.kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.kpi.green .kpi-accent{background:var(--green)}
+.kpi.blue .kpi-accent{background:var(--blue)}
+.kpi.yellow .kpi-accent{background:var(--yellow)}
+.kpi-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:8px}
+.kpi-value{font-size:24px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-sub{font-size:11px;color:var(--text2)}
+.sec{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.sec-title{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:inline-block;width:3px;height:16px;background:var(--green);border-radius:2px}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
+.pill:hover{border-color:var(--green);color:var(--green-dark);background:var(--green-bg)}
+.pill.on{background:var(--green);border-color:var(--green);color:#fff}
+.card{background:var(--surface);border-radius:14px;box-shadow:var(--shadow-sm);border:1px solid var(--border);overflow:hidden;margin-bottom:20px;transition:background .25s}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:860px}
+th{background:var(--surface2);padding:10px 12px;text-align:center;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;transition:background .25s}
+th.l{text-align:left}
+td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:center;font-size:12px;vertical-align:middle}
+td.l{text-align:left}
+tr:last-child td{border-bottom:none}
+tr.alt td{background:var(--row-alt)}
+tr:hover td{background:var(--row-hover)}
+.bank-cell{display:flex;align-items:center;gap:10px}
+.bank-logo{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.bank-name{font-weight:600;font-size:13px}
+.bank-src{font-size:10px;color:var(--text3);margin-top:2px}
+.bank-src a{color:var(--green-dark);text-decoration:none;border-bottom:1px dashed var(--green-mid)}
+.bank-src a:hover{color:var(--green)}
+.pf-badge{display:inline-block;font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--green-bg);color:var(--green-dark);border:1px solid var(--green-mid);margin-left:4px}
+.vg{color:#16a34a;font-weight:700}.vw{color:var(--yellow);font-weight:700}.vr{color:var(--red);font-weight:700}.vn{color:var(--text3)}.v{color:var(--text);font-weight:600}
+.est{font-size:9px;color:var(--text3)}
+.rorwa-wrap{display:flex;align-items:center;gap:6px;justify-content:center}
+.rorwa-val{font-size:14px;font-weight:700}
+.bar{width:40px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px}
+.st-tag{display:inline-block;font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px}
+.st-data{background:var(--green-bg);color:var(--green-dark)}
+.st-part{background:var(--yellow-bg);color:var(--yellow)}
+.st-loss{background:var(--red-bg);color:var(--red)}
+.st-exit,.st-nd{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.feed-grid{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:20px}
+.signal-list{display:flex;flex-direction:column;gap:10px}
+.signal-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:14px 16px;box-shadow:var(--shadow-sm);transition:box-shadow .2s,background .25s}
+.signal-card:hover{box-shadow:var(--shadow)}
+.signal-card.high{border-left:3px solid var(--green)}
+.signal-card.med{border-left:3px solid var(--yellow)}
+.signal-card.low{border-left:3px solid var(--border2)}
+.sig-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sig-bank{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.sig-score{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px}
+.sc-h{background:var(--green-bg);color:var(--green-dark)}
+.sc-m{background:var(--yellow-bg);color:var(--yellow)}
+.sc-l{background:var(--surface2);color:var(--text2)}
+.sig-text{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px}
+.sig-source{font-size:10px;color:var(--text3);margin-bottom:6px}
+.sig-source a{color:var(--green-dark);text-decoration:none;border-bottom:1px dashed var(--green-mid)}
+.sig-foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sig-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.sig-time{font-size:10px;color:var(--text3);margin-left:auto}
+.panel{background:var(--surface);border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;transition:background .25s}
+.panel-header{background:var(--green);padding:14px 16px}
+.panel-header-title{font-size:13px;font-weight:600;color:#fff}
+.panel-body{padding:16px;display:flex;flex-direction:column;gap:14px}
+.panel-section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:8px}
+.panel-text{font-size:12px;color:var(--text2);line-height:1.7}
+.divl{border-top:1px solid var(--border);padding-top:14px}
+.ins-row{display:flex;gap:8px;font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px}
+.ins-row:last-child{margin-bottom:0}
+.ins-icon{flex-shrink:0;font-size:13px;margin-top:1px}
+.sources-section{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
+.sources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:10px}
+.source-link{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);text-decoration:none;color:var(--text2);font-size:12px;font-weight:500;transition:all .15s}
+.source-link:hover{border-color:var(--green);background:var(--green-bg);color:var(--green-dark)}
+.source-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.foot{border-top:1px solid var(--border);background:var(--surface);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:8px;transition:background .25s}
+.foot-note{font-size:11px;color:var(--text3)}
+.foot-m{font-size:11px;color:var(--text2)}
+.foot-m span{color:var(--green-dark);font-weight:500}
+.ldg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.2);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.ldg.show{display:flex}
+.spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ldg-txt{font-size:13px;font-weight:500;color:var(--text)}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}.feed-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.kpi-row{grid-template-columns:1fr 1fr}.hdr,.main{padding-left:12px;padding-right:12px}}
+</style>
+</head> <body>
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-mark">BR</div>
+    <div class="logo-divider"></div>
+    <div>
+      <div class="logo-text">Банковский Радар</div>
+      <div class="logo-sub">ТОП-20 · ПФ-мониторинг · МСФО</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="live-badge"><span class="live-dot"></span>live</div>
+    <div id="upd-time">загрузка...</div>
+    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Переключить тему">🌙</button>
+  </div>
+</header>
+<main class="main">
+  <div class="kpi-row">
+    <div class="kpi green"><div class="kpi-accent"></div><div class="kpi-label">Медиана ROE · ТОП-20</div><div class="kpi-value" id="k-roe">—</div><div class="kpi-sub">МСФО 2025</div></div>
+    <div class="kpi green"><div class="kpi-accent"></div><div class="kpi-label">Лидер iRoRWA</div><div class="kpi-value" id="k-rorwa">—</div><div class="kpi-sub" id="k-rorwa-sub">—</div></div>
+    <div class="kpi blue"><div class="kpi-accent"></div><div class="kpi-label">Лучший CIR · ПФ</div><div class="kpi-value" id="k-cir">—</div><div class="kpi-sub" id="k-cir-sub">—</div></div>
+    <div class="kpi yellow"><div class="kpi-accent"></div><div class="kpi-label">Мин. H20.0</div><div class="kpi-value" id="k-h20">—</div><div class="kpi-sub" id="k-h20-sub">—</div></div>
+    <div class="kpi green"><div class="kpi-accent"></div><div class="kpi-label">Портфель ПФ · ДОМ.РФ</div><div class="kpi-value" id="k-pf">—</div><div class="kpi-sub">+27% г/г · 78 регионов</div></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">Матрица метрик · МСФО 2025</div>
+    <div class="pills">
+      <button class="pill on" onclick="fil('all',this)">Все</button>
+      <button class="pill" onclick="fil('state',this)">Госбанки</button>
+      <button class="pill" onclick="fil('private',this)">Частные</button>
+      <button class="pill" onclick="fil('pf',this)">ПФ-фокус</button>
+      <button class="pill" onclick="fil('listed',this)">Биржевые</button>
+      <button class="pill" onclick="srt('rank',this)">По активам</button>
+      <button class="pill" onclick="srt('rorwa',this)">↓ iRoRWA</button>
+      <button class="pill" onclick="srt('roe',this)">↓ ROE</button>
+    </div>
+  </div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr>
+      <th class="l" style="width:20px">#</th>
+      <th class="l" style="min-width:170px">Банк · Источник</th>
+      <th>ROE</th><th>NIM</th>
+      <th>CIR<br><span style="font-size:9px;font-weight:400;text-transform:none">↓ лучше</span></th>
+      <th>COR<br><span style="font-size:9px;font-weight:400;text-transform:none">↓ лучше</span></th>
+      <th style="background:var(--green-bg)">★ iRoRWA<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--green-dark)">ROE × H20.0</span></th>
+      <th>H20.0</th><th>Статус</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table></div></div>
+  <div class="sec">
+    <div class="sec-title">Лента сигналов</div>
+    <div class="pills">
+      <button class="pill on" onclick="ff('all',this)">Все</button>
+      <button class="pill" onclick="ff('metric',this)">Метрики</button>
+      <button class="pill"<script>
+const THEME_KEY='br-theme';
+function toggleTheme(){
+  const html=document.documentElement;
+  const next=html.getAttribute('data-theme')==='light'?'dark':'light';
+  html.setAttribute('data-theme',next);
+  localStorage.setItem(THEME_KEY,next);
+  document.getElementById('theme-btn').textContent=next==='dark'?'☀️':'🌙';
+}
+(function(){
+  const saved=localStorage.getItem(THEME_KEY);
+  if(saved){
+    document.documentElement.setAttribute('data-theme',saved);
+    document.getElementById('theme-btn').textContent=saved==='dark'?'☀️':'🌙';
+  }
+})();
+
+const BANK_IR_URLS={
+  1:'https://www.sberbank.com/ru/investor-relations/reports-and-publications/financial-results',
+  2:'https://www.vtb.ru/ir/statements/results/',
+  3:'https://www.gazprombank.ru/press/',
+  4:'https://alfabank.ru/alfa-investor/',
+  5:'https://www.rshb.ru/about/reports-conclusion/msfo/',
+  6:'https://ir.mkb.ru/financial-results',
+  7:'https://t-technologies.ru/results/',
+  8:'https://sovcombank.ru/about/info',
+  9:'https://domrfbank.ru/about/information/msfo/',
+  10:'https://www.psbank.ru/Bank/Investors/IFRS',
+  12:'https://www.bspb.ru/investors/financial-statements/IFRS',
+  13:'https://www.mtsbank.ru/investors-and-shareholders/results/',
+  14:'https://uralsib.ru/about/investors/',
+};
+
+let DATA=null,filterType='all',sortType='rank',feedFilter='all';
+
+async function loadData(){
+  document.getElementById('ldg').classList.add('show');
+  try{
+    const r=await fetch('data.json?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    DATA=await r.json();
+    render();
+  }catch(e){
+    document.getElementById('ldg-txt').textContent='Ошибка: '+e.message;
+    setTimeout(()=>document.getElementById('ldg').classList.remove('show'),3000);
+  }finally{
+    document.getElementById('ldg').classList.remove('show');
+  }
+}
+
+function render(){
+  if(!DATA) return;
+  renderKPI();
+  renderMatrix();
+  renderSignals();
+  renderPanel();
+  document.getElementById('upd-time').textContent=DATA.updated_at||DATA.updated||'—';
+}
+
+function renderKPI(){
+  const k=DATA.kpi||{};function cR(v){return !v?'vn':v>=22?'vg':v>=15?'vw':'vr'}
+function cN(v){return !v?'vn':v>=5?'vg':v>=2?'vw':'vr'}
+function cC(v){return !v?'vn':v<=35?'vg':v<=50?'vw':'vr'}
+function cO(v){return !v?'vn':v<=1.5?'vg':v<=3?'vw':'vr'}
+function cW(v){return !v?'vn':v>=2.8?'vg':v>=1.5?'vw':'vr'}
+function cH(v){return !v?'vn':v>=13?'vg':v>=11?'vw':'vr'}
+function fv(v,e){if(v===null||v===undefined)return '<span class="vn">—</span>';return v.toFixed(1)+'%'+(e?'<sup class="est">~</sup>':'')}
+
+function renderMatrix(){
+  let banks=[...(DATA.banks||[])];
+  if(filterType==='state') banks=banks.filter(b=>b.tp==='state');
+  if(filterType==='private') banks=banks.filter(b=>b.tp==='private'||b.tp==='foreign');
+  if(filterType==='listed') banks=banks.filter(b=>b.pub);
+  if(filterType==='pf') banks=banks.filter(b=>b.pf);
+  if(sortType==='rorwa') banks.sort((a,b)=>(b.rorwa||0)-(a.rorwa||0));
+  if(sortType==='roe') banks.sort((a,b)=>(b.roe||0)-(a.roe||0));
+  if(sortType==='rank') banks.sort((a,b)=>a.r-b.r);
+  const stMap={data:'st-data данные',part:'st-part частично',loss:'st-loss убыток',exit:'st-exit уходит',nd:'st-nd н/д'};
+  document.getElementById('tbody').innerHTML=banks.map((b,i)=>{
+    const lc2=b.lc==='#111111'?'#F9D02A':'#fff';
+    const pf=b.pf?'<span class="pf-badge">ПФ</span>':'';
+    const cl=cW(b.rorwa);
+    const bc=cl==='vg'?'#16a34a':cl==='vw'?'#d97706':'#ef4444';
+    let rr='<span class="vn">—</span>';
+    if(b.rorwa){rr=`<div class="rorwa-wrap"><span class="rorwa-val ${cl}">${b.rorwa.toFixed(2)}%</span><div class="bar"><div class="bar-fill" style="width:${Math.min(100,b.rorwa/4.5*100)}%;background:${bc}"></div></div></div>`}
+    else if(b.st==='loss') rr='<span class="st-tag st-loss">убыток</span>';
+    else if(b.st==='exit') rr='<span class="st-tag st-exit">уходит</span>';
+    const [sc,sl]=(stMap[b.st]||'st-nd н/д').split(' ');
+    const irUrl=BANK_IR_URLS[b.r];
+    const
