@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Банковский Радар · ПФ-мониторинг</title>
+<style>
+:root{
+  --bg:#0d0f11;--bg2:#131619;--bg3:#1a1e22;
+  --border:#252a2f;--border2:#2e3540;
+  --text:#e2e6ea;--text2:#8a9099;--text3:#4e5560;
+  --accent:#2f7ef5;--accent2:#1a4fa8;
+  --green:#22c55e;--green-bg:rgba(34,197,94,.1);
+  --yellow:#f59e0b;--yellow-bg:rgba(245,158,11,.1);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.1);
+  --pro:#a78bfa;--pro-bg:rgba(167,139,250,.1);
+  --mono:'SF Mono','Fira Code',monospace;
+  --sans:-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13px;min-height:100vh}
+
+/* HEADER */
+.hdr{border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:50px;position:sticky;top:0;background:var(--bg);z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:26px;height:26px;border:1.5px solid var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--accent)}
+.logo-title{font-family:var(--mono);font-size:12px;font-weight:500}
+.logo-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--text2)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+#upd-time{font-family:var(--mono);font-size:10px;color:var(--text3)}
+
+/* MAIN */
+.main{max-width:1380px;margin:0 auto;padding:18px 20px}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.blue::before{background:var(--accent)}
+.kpi.green::before{background:var(--green)}
+.kpi.yellow::before{background:var(--yellow)}
+.kpi.red::before{background:var(--red)}
+.kpi.pro::before{background:var(--pro)}
+.kpi-lbl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px}
+.kpi-val{font-family:var(--mono);font-size:21px;font-weight:600;line-height:1}
+.kpi-sub{font-family:var(--mono);font-size:9px;color:var(--text2);margin-top:4px}
+
+/* SEC HEAD */
+.sec{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.sec-title{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);display:flex;align-items:center;gap:7px}
+.sec-title::before{content:'';display:inline-block;width:2px;height:11px;background:var(--accent);border-radius:1px}
+.pills{display:flex;gap:4px;flex-wrap:wrap}
+.pill{padding:2px 8px;border-radius:2px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--mono);font-size:9px;cursor:pointer;transition:.1s;font-family:inherit}
+.pill:hover,.pill.on{border-color:var(--accent);color:var(--accent);background:rgba(47,126,245,.08)}
+
+/* TABLE */
+.tw{border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:18px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:820px}
+th{background:var(--bg3);padding:7px 8px;text-align:center;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
+th.l{text-align:left}
+td{padding:7px 8px;border-bottom:1px solid var(--border);text-align:center;font-family:var(--mono);font-size:11px;vertical-align:middle}
+td.l{text-align:left;font-family:var(--sans)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.018)}
+.bn{display:flex;align-items:center;gap:7px}
+.bl{width:20px;height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;font-family:var(--mono)}
+.bname{font-weight:500;font-size:11px;color:var(--text)}
+.bsrc{font-size:9px;color:var(--text3);margin-top:1px;font-family:var(--mono)}
+.pf{font-size:8px;padding:1px 4px;border-radius:2px;background:var(--pro-bg);color:var(--pro);border:1px solid rgba(167,139,250,.2);margin-left:3px;font-family:var(--mono)}
+.vg{color:var(--green);font-weight:600}
+.vw{color:var(--yellow);font-weight:600}
+.vr{color:var(--red);font-weight:600}
+.vn{color:var(--text3)}
+.v{color:var(--text);font-weight:500}
+.e{font-size:8px;color:var(--text3)}
+.rv{font-size:13px;font-weight:600}
+.bar{display:inline-block;width:36px;height:3px;background:var(--border2);border-radius:2px;margin-left:3px;vertical-align:middle;overflow:hidden}
+.barf{height:100%;border-radius:2px}
+.st{display:inline-block;font-family:var(--mono);font-size:8px;padding:2px 5px;border-radius:2px}
+.st-data{background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.st-part{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(245,158,11,.2)}
+.st-loss{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.st-exit,.st-nd{background:var(--bg3);color:var(--text3);border:1px solid var(--border2)}
+
+/* FEED */
+.feed{display:grid;grid-template-columns:1fr 300px;gap:14px;margin-bottom:18px}
+.sigs{display:flex;flex-direction:column;gap:7px}
+.sig{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:11px 13px}
+.sig.h{border-left:2px solid var(--accent)}
+.sig.m{border-left:2px solid var(--yellow)}
+.sig.l{border-left:2px solid var(--text3)}
+.sig-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.sig-bank{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500}
+.sig-sc{font-family:var(--mono);font-size:9px;padding:2px 5px;border-radius:2px}
+.sc-h{background:rgba(47,126,245,.15);color:var(--accent)}
+.sc-m{background:var(--yellow-bg);color:var(--yellow)}
+.sc-l{background:var(--bg3);color:var(--text3)}
+.sig-txt{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:5px}
+.sig-foot{display:flex;align-items:center;gap:6px}
+.sig-tag{font-family:var(--mono);font-size:8px;padding:1px 4px;border-radius:2px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+.sig-time{font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:auto}
+
+/* PANEL */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.panel-ttl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
+.panel-txt{font-size:12px;color:var(--text2);line-height:1.6}
+.ins{display:flex;flex-direction:column;gap:7px}
+.ins-row{display:flex;gap:7px;font-size:11px;color:var(--text2);line-height:1.4}
+.ins-ic{flex-shrink:0;margin-top:1px;font-size:11px}
+.divl{border-top:1px solid var(--border);padding-top:12px}
+
+/* FOOTER */
+.foot{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.foot-note,.foot-m{font-family:var(--mono);font-size:9px;color:var(--text3)}
+.foot-m span{color:var(--accent)}
+
+/* LOADING */
+.ldg{display:none;position:fixed;inset:0;background:rgba(13,15,17,.7);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.ldg.show{display:flex}
+.spin{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ldg-txt{font-family:var(--mono);font-size:11px;color:var(--text2)}
+
+@media(max-width:860px){
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .feed{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-icon">BR</div>
+    <div>
+      <div class="logo-title">Банковский Радар</div>
+      <div class="logo-sub">Конкурентная разведка · ПФ-сегмент · ТОП-20</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="live"><span class="dot"></span>live</div>
+    <div id="upd-time">загрузка...</div>
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="kpi-row" id="kpi-row">
+    <div class="kpi blue"><div class="kpi-lbl">Медиана ROE · ТОП-20</div><div class="kpi-val" id="k-roe">—</div><div class="kpi-sub">МСФО 2025</div></div>
+    <div class="kpi green"><div class="kpi-lbl">Лидер iRoRWA</div><div class="kpi-val" id="k-rorwa">—</div><div class="kpi-sub" id="k-rorwa-sub">—</div></div>
+    <div class="kpi yellow"><div class="kpi-lbl">Лучший CIR · ПФ</div><div class="kpi-val" id="k-cir">—</div><div class="kpi-sub" id="k-cir-sub">—</div></div>
+    <div class="kpi red"><div class="kpi-lbl">Мин. H20.0</div><div class="kpi-val" id="k-h20">—</div><div class="kpi-sub" id="k-h20-sub">—</div></div>
+    <div class="kpi pro"><div class="kpi-lbl">Портфель ПФ · ДОМ.РФ</div><div class="kpi-val" id="k-pf">—</div><div class="kpi-sub">+27% г/г · 78 регионов</div></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Матрица метрик · МСФО 2025</div>
+    <div class="pills">
+      <button class="pill on" onclick="fil('all',this)">Все</button>
+      <button class="pill" onclick="fil('state',this)">Госбанки</button>
+      <button class="pill" onclick="fil('private',this)">Частные</button>
+      <button class="pill" onclick="fil('pf',this)">ПФ-фокус</button>
+      <button class="pill" onclick="fil('listed',this)">Биржевые</button>
+      <span style="width:1px;height:14px;background:var(--border2);display:inline-block;margin:0 2px"></span>
+      <button class="pill" onclick="srt('rank',this)">По активам</button>
+      <button class="pill" onclick="srt('rorwa',this)">↓ iRoRWA</button>
+      <button class="pill" onclick="srt('roe',this)">↓ ROE</button>
+    </div>
+  </div>
+
+  <div class="tw"><table>
+    <thead><tr>
+      <th class="l" style="width:20px">#</th>
+      <th class="l" style="min-width:155px">Банк</th>
+      <th>ROE</th><th>NIM</th>
+      <th>CIR<br><span style="font-size:8px;font-weight:400;letter-spacing:0">↓ лучше</span></th>
+      <th>COR<br><span style="font-size:8px;font-weight:400;letter-spacing:0">↓ лучше</span></th>
+      <th style="background:rgba(167,139,250,.04)">★ iRoRWA<br><span style="font-size:8px;font-weight:400;letter-spacing:0;color:var(--pro)">ROE × H20.0</span></th>
+      <th>H20.0</th><th>Статус</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table></div>
+
+  <div class="sec">
+    <div class="sec-title">Лента сигналов</div>
+    <div class="pills">
+      <button class="pill on" onclick="ff('all',this)">Все</button>
+      <button class="pill" onclick="ff('metric',this)">Метрики</button>
+      <button class="pill" onclick="ff('risk',this)">Риски</button>
+      <button class="pill" onclick="ff('strategy',this)">Стратегии</button>
+    </div>
+  </div>
+
+  <div class="feed">
+    <div class="sigs" id="sigs"></div>
+    <div class="panel">
+      <div class="panel-ttl">Аналитический вывод</div>
+      <div class="panel-txt" id="summary">Загрузка...</div>
+      <div class="divl">
+        <div class="panel-ttl" style="margin-bottom:8px">Ключевые наблюдения</div>
+        <div class="ins" id="insights"></div>
+      </div>
+      <div class="divl">
+        <div class="panel-ttl" style="margin-bottom:8px">Прогнозы 2026–2030</div>
+        <div class="ins" id="forecasts"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-note">Источники: МСФО пресс-релизы банков · Банковское обозрение · РБК · Smart-lab · AKM</div>
+  <div class="foot-m">iRoRWA = ROE × H20.0 · RWA закрыт ЦБ РФ до окт.2026 · <span>авторский прокси</span></div>
+</footer>
+
+<div class="ldg" id="ldg"><div class="spin"></div><div class="ldg-txt" id="ldg-txt">Загрузка данных...</div></div>
+
+<script>
+let DATA = null;
+let filterType = 'all';
+let sortType = 'rank';
+let feedFilter = 'all';
+
+// Загружаем data.json при старте
+async function loadData() {
+  document.getElementById('ldg').classList.add('show');
+  try {
+    const r = await fetch('data.json?t=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    DATA = await r.json();
+    render();
+  } catch(e) {
+    document.getElementById('ldg-txt').textContent = 'Ошибка загрузки: ' + e.message;
+    setTimeout(() => document.getElementById('ldg').classList.remove('show'), 3000);
+  } finally {
+    document.getElementById('ldg').classList.remove('show');
+  }
+}
+
+function render() {
+  if (!DATA) return;
+  renderKPI();
+  renderMatrix();
+  renderSignals();
+  renderPanel();
+  document.getElementById('upd-time').textContent = 'Обновлено: ' + (DATA.updated_at || DATA.updated || '—');
+}
+
+function renderKPI() {
+  const k = DATA.kpi || {};
+  document.getElementById('k-roe').textContent    = k.median_roe ? k.median_roe + '%' : '—';
+  document.getElementById('k-rorwa').textContent  = k.leader_rorwa_val ? k.leader_rorwa_val + '%' : '—';
+  document.getElementById('k-rorwa-sub').textContent = k.leader_rorwa_bank || '—';
+  document.getElementById('k-cir').textContent    = k.best_cir_pf_val ? k.best_cir_pf_val + '%' : '—';
+  document.getElementById('k-cir-sub').textContent = k.best_cir_pf_bank || '—';
+  document.getElementById('k-h20').textContent    = k.min_h20_val ? k.min_h20_val + '%' : '—';
+  document.getElementById('k-h20-sub').textContent = k.min_h20_bank || '—';
+  document.getElementById('k-pf').textContent     = k.dom_rf_pf_portfolio || '—';
+}
+
+function cR(v){return !v?'vn':v>=22?'vg':v>=15?'vw':'vr'}
+function cN(v){return !v?'vn':v>=5?'vg':v>=2?'vw':'vr'}
+function cC(v){return !v?'vn':v<=35?'vg':v<=50?'vw':'vr'}
+function cO(v){return !v?'vn':v<=1.5?'vg':v<=3?'vw':'vr'}
+function cW(v){return !v?'vn':v>=2.8?'vg':v>=1.5?'vw':'vr'}
+function cH(v){return !v?'vn':v>=13?'vg':v>=11?'vw':'vr'}
+function fv(v,e){
+  if(v===null||v===undefined) return '<span class="vn">—</span>';
+  return v.toFixed(1)+'%'+(e?'<sup class="e">~</sup>':'');
+}
+function mkBar(v,mx,cl){
+  if(!v) return '';
+  const bc=cl==='vg'?'#22c55e':cl==='vw'?'#f59e0b':'#ef4444';
+  return `<span class="bar"><span class="barf" style="width:${Math.min(100,v/mx*100)}%;background:${bc}"></span></span>`;
+}
+
+function renderMatrix(){
+  let banks = [...(DATA.banks || [])];
+  if(filterType==='state')   banks=banks.filter(b=>b.tp==='state');
+  if(filterType==='private') banks=banks.filter(b=>b.tp==='private'||b.tp==='foreign');
+  if(filterType==='listed')  banks=banks.filter(b=>b.pub);
+  if(filterType==='pf')      banks=banks.filter(b=>b.pf);
+  if(sortType==='rorwa') banks.sort((a,b)=>(b.rorwa||0)-(a.rorwa||0));
+  if(sortType==='roe')   banks.sort((a,b)=>(b.roe||0)-(a.roe||0));
+  if(sortType==='rank')  banks.sort((a,b)=>a.r-b.r);
+
+  const stMap={data:'st-data данные',part:'st-part частично',loss:'st-loss убыток',exit:'st-exit уходит',nd:'st-nd н/д'};
+  document.getElementById('tbody').innerHTML = banks.map((b,i)=>{
+    const cl=cW(b.rorwa);
+    const bc=cl==='vg'?'#22c55e':cl==='vw'?'#f59e0b':'#ef4444';
+    let rr='<span class="vn">—</span>';
+    if(b.rorwa) rr=`<span class="rv ${cl}">${b.rorwa.toFixed(2)}%</span><span class="bar"><span class="barf" style="width:${Math.min(100,b.rorwa/4.5*100)}%;background:${bc}"></span></span>`;
+    else if(b.st==='loss') rr='<span class="st st-loss">убыток</span>';
+    else if(b.st==='exit') rr='<span class="st st-exit">уходит</span>';
+    const [sc,sl]=(stMap[b.st]||'st-nd н/д').split(' ');
+    const pf=b.pf?'<span class="pf">ПФ</span>':'';
+    const lc2=b.lc==='#111111'?'#F9D02A':'#fff';
+    return `<tr${i%2===1?' style="background:rgba(255,255,255,.015)"':''}>
+      <td class="l" style="color:var(--text3);font-size:10px">${b.r}</td>
+      <td class="l">
+        <div class="bn">
+          <div class="bl" style="background:${b.lc};color:${lc2}">${b.lo}</div>
+          <div><div class="bname">${b.n}${pf}</div><div class="bsrc">${b.src||''}</div></div>
+        </div>
+      </td>
+      <td class="${cR(b.roe)}">${fv(b.roe,b.re)}</td>
+      <td class="${cN(b.nim)}">${fv(b.nim,b.ne)}</td>
+      <td class="${cC(b.cir)}">${fv(b.cir,b.ce)}</td>
+      <td class="${cO(b.cor)}">${fv(b.cor,b.oe)}</td>
+      <td style="background:rgba(167,139,250,.03)">${rr}</td>
+      <td class="${cH(b.h20)}">${b.h20?b.h20.toFixed(1)+'%'+(b.he?'<sup class="e">~</sup>':''):'<span class="vn">—</span>'}</td>
+      <td><span class="st ${sc}">${sl}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderSignals(){
+  let sigs = (DATA.signals||[]).filter(s=>feedFilter==='all'||s.type===feedFilter);
+  const pc={high:'h',med:'m',low:'l'};
+  const sc={high:'sc-h',med:'sc-m',low:'sc-l'};
+  document.getElementById('sigs').innerHTML = sigs.map(s=>`
+    <div class="sig ${pc[s.priority]||'l'}">
+      <div class="sig-top">
+        <div class="sig-bank">
+          <div class="bl" style="background:${s.lc};color:#fff;width:18px;height:18px;font-size:7px">${s.logo}</div>
+          ${s.bank}
+        </div>
+        <div class="sig-sc ${sc[s.priority]||'sc-l'}">SCORE ${s.score}</div>
+      </div>
+      <div class="sig-txt">${s.text}</div>
+      <div class="sig-foot">
+        ${(s.tags||[]).map(t=>`<span class="sig-tag">${t}</span>`).join('')}
+        <span class="sig-time">${s.time||''}</span>
+      </div>
+    </div>`).join('') || '<div style="color:var(--text3);font-size:12px;padding:12px">Нет сигналов</div>';
+}
+
+function renderPanel(){
+  document.getElementById('summary').textContent = DATA.summary || '—';
+  document.getElementById('insights').innerHTML = (DATA.insights||[]).map(i=>
+    `<div class="ins-row"><span class="ins-ic">${i.icon}</span><span>${i.text}</span></div>`).join('');
+  document.getElementById('forecasts').innerHTML = (DATA.forecasts||[]).map(i=>
+    `<div class="ins-row"><span class="ins-ic" style="color:var(--accent)">${i.icon}</span><span>${i.text}</span></div>`).join('');
+}
+
+function fil(f,btn){
+  filterType=f;
+  document.querySelectorAll('.pills .pill').forEach(b=>{if(['Все','Госбанки','Частные','ПФ-фокус','Биржевые'].includes(b.textContent))b.classList.remove('on')});
+  btn.classList.add('on');
+  renderMatrix();
+}
+function srt(s,btn){
+  sortType=s;
+  document.querySelectorAll('.pills .pill').forEach(b=>{if(['По активам','↓ iRoRWA','↓ ROE'].includes(b.textContent))b.classList.remove('on')});
+  btn.classList.add('on');
+  renderMatrix();
+}
+function ff(f,btn){
+  feedFilter=f;
+  btn.parentElement.querySelectorAll('.pill').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderSignals();
+}
+
+loadData();
+// Автообновление каждые 5 минут (подхватит новый data.json если обновился)
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
