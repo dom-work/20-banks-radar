@@ -137,7 +137,7 @@ BANKS = [
   {"r":18,"n":"БМ-Банк",        "lo":"О","lc":"#4527A0","tp":"state", "pub":0,"pf":0,
    "e_id":None, "ticker":None,
    "ir_urls":[],
-   "base":{"roe":None,"nim":None,"cir":None,"cor":None,"h20":None,"src":"интеграция Открытие","period":None},
+   "base":{"roe":None,"nim":None,"cir":None,"cor":None,"h20":None,"src":"правопреемник Открытия с 01.01.2025, присоединение к ВТБ отложено","period":None},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"nd"},
 
   {"r":19,"n":"Банк Россия",    "lo":"Р","lc":"#1A237E","tp":"private","pub":0,"pf":0,
