@@ -561,7 +561,7 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
       <div class="kpi-accent"></div>
       <div class="kpi-label">Медиана ROE · ТОП-20</div>
       <div class="kpi-value" id="k-roe">—</div>
-      <div class="kpi-sub">МСФО 2025</div>
+      <div class="kpi-sub">данные разных периодов</div>
     </div>
     <div class="kpi green">
       <div class="kpi-accent"></div>
@@ -591,7 +591,7 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
 
   <!-- MATRIX -->
   <div class="sec">
-    <div class="sec-title">Матрица метрик · МСФО 2025</div>
+    <div class="sec-title">Матрица метрик · МСФО актуальные данные</div>
     <div class="pills">
       <button class="pill on" onclick="fil('all',this)">Все</button>
       <button class="pill" onclick="fil('state',this)">Госбанки</button>
@@ -763,9 +763,9 @@ function toggleTheme() {
 
 // ── ССЫЛКИ НА ИСТОЧНИКИ ОТЧЁТНОСТИ ───────────────────────────────────
 const BANK_IR_URLS = {
-  1:  'https://smart-lab.ru/q/SBER/f/y/',
-  2:  'https://smart-lab.ru/q/VTBR/f/y/',
-  3:  'https://www.akm.ru/news/?q=Газпромбанк+МСФО',
+  1:  'https://www.sberbank.ru/ru/investor-relations',
+  2:  'https://www.vtb.ru/ir/statements/results/',
+  3:  'https://bosfera.ru/bo/gazprombank',
   4:  'https://alfabank.ru/alfa-investor/',
   5:  'https://www.rshb.ru/about/reports-conclusion/msfo/',
   6:  'https://smart-lab.ru/q/CBOM/f/y/',
@@ -773,9 +773,14 @@ const BANK_IR_URLS = {
   8:  'https://smart-lab.ru/q/SVCB/f/y/',
   9:  'https://domrfbank.ru/about/information/msfo/',
   10: 'https://www.psbank.ru/Bank/Investors/IFRS',
-  12: 'https://www.bspb.ru/investors/financial-statements/IFRS',
-  13: 'https://smart-lab.ru/q/MBNK/f/y/',
-  14: 'https://bosfera.ru/bo/bank-uralsib',
+  11: 'https://www.unicreditbank.ru/ru/about/shareholders-and-investors.html',
+  12: 'https://www.raiffeisen.ru/about/investors/information/',
+  13: 'https://smart-lab.ru/q/BSPB/f/y/',
+  14: 'https://smart-lab.ru/q/MBNK/f/y/',
+  15: 'https://novikombank.ru/about/disclosure/financial-reports/',
+  16: 'https://uralsib.ru/about/investors/',
+  17: 'https://www.akbars.ru/about/free-info/reports/',
+  19: 'https://bosfera.ru/bo/bank-rossiya',
 };
 
 // ── ДАННЫЕ ────────────────────────────────────────────────────────────
@@ -866,11 +871,31 @@ function renderMatrix(){
 
     // Кликабельный источник
     const irUrl = BANK_IR_URLS[b.r];
-    const srcHtml = b.src
-      ? (irUrl
-          ? `<a href="${irUrl}" target="_blank" rel="noopener">${b.src} ↗</a>`
-          : b.src)
+    // Базовая дата (годовая МСФО)
+    const baseSrc = b.base ? b.base.src : b.src;
+    const baseSrcHtml = baseSrc
+      ? (irUrl ? `<a href="${irUrl}" target="_blank" rel="noopener">${baseSrc} ↗</a>` : baseSrc)
       : '';
+
+    // Последняя доступная дата (квартальная)
+    const lat = b.latest;
+    const latSrcHtml = lat && lat.src
+      ? `<span style="color:var(--green-dark);font-weight:600">${lat.src}</span>`
+      : '';
+
+    // Если latest данные есть и отличаются от базы — показываем обе строки
+    const hasLatest = lat && lat.src && lat.src !== baseSrc;
+    const srcBlock = hasLatest
+      ? `${baseSrcHtml}<br/>${latSrcHtml}`
+      : baseSrcHtml;
+
+    // Для отображения используем latest если есть, иначе base
+    const dispRoe = (lat && lat.roe) || b.roe;
+    const dispNim = (lat && lat.nim) || b.nim;
+    const dispCir = (lat && lat.cir) || b.cir;
+    const dispCor = (lat && lat.cor) || b.cor;
+    const dispH20 = (lat && lat.h20) || b.h20;
+    const dispRorwa = (dispRoe && dispH20) ? (dispRoe * dispH20 / 100).toFixed(2) : b.rorwa;
 
     return `<tr class="${i%2===1?'alt':''}">
       <td class="l" style="color:var(--text3);font-size:11px">${b.r}</td>
@@ -879,16 +904,16 @@ function renderMatrix(){
           <div class="bank-logo" style="background:${b.lc};color:${lc2}">${b.lo}</div>
           <div>
             <div class="bank-name">${b.n}${pf}</div>
-            <div class="bank-src">${srcHtml}</div>
+            <div class="bank-src">${srcBlock}</div>
           </div>
         </div>
       </td>
-      <td class="${cR(b.roe)}">${fv(b.roe,b.re)}</td>
-      <td class="${cN(b.nim)}">${fv(b.nim,b.ne)}</td>
-      <td class="${cC(b.cir)}">${fv(b.cir,b.ce)}</td>
-      <td class="${cO(b.cor)}">${fv(b.cor,b.oe)}</td>
+      <td class="${cR(dispRoe)}">${fv(dispRoe,b.re)}</td>
+      <td class="${cN(dispNim)}">${fv(dispNim,b.ne)}</td>
+      <td class="${cC(dispCir)}">${fv(dispCir,b.ce)}</td>
+      <td class="${cO(dispCor)}">${fv(dispCor,b.oe)}</td>
       <td style="background:var(--green-bg)">${rr}</td>
-      <td class="${cH(b.h20)}">${b.h20?b.h20.toFixed(1)+'%'+(b.he?'<sup class="est">~</sup>':''):'<span class="vn">—</span>'}</td>
+      <td class="${cH(dispH20)}">${dispH20?parseFloat(dispH20).toFixed(1)+'%'+(b.he?'<sup class="est">~</sup>':''):'<span class="vn">—</span>'}</td>
       <td><span class="st-tag ${sc}">${sl}</span></td>
     </tr>`;
   }).join('');
