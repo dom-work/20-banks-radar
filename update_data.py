@@ -32,131 +32,119 @@ UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
 # e_disclosure_id — ID на e-disclosure.ru для поиска PDF
 # Базовые данные МСФО 2025 (годовые) — эталон
 BANKS = [
-  {"r":1, "n":"Сбербанк",       "lo":"С","lc":"#21A038","tp":"state", "pub":1,"pf":0,
+  {"r":1,  "n":"Сбербанк",       "lo":"С","lc":"#21A038","tp":"state",  "pub":1,"pf":0,
    "e_id":"1481", "ticker":"SBER",
-   "ir_urls":["https://www.sberbank.ru/ru/investor-relations/reports-and-publications/ifrs","https://smart-lab.ru/q/SBER/f/y/"],
-   "base":{"roe":22.7,"nim":6.2,"cir":30.3,"cor":1.3,"h20":14.6,"src":"МСФО 2025","period":"2025"},
+   "ir_urls":["https://www.sberbank.ru/ru/investor-relations","https://smart-lab.ru/q/SBER/f/y/"],
+   "base":{"roe":22.7,"nim":6.2,"cir":30.3,"cor":1.3,"h20":14.6,"src":"МСФО фев.2026","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"data"},
 
-  {"r":2, "n":"ВТБ",            "lo":"В","lc":"#003087","tp":"state", "pub":1,"pf":0,
+  {"r":2,  "n":"ВТБ",            "lo":"В","lc":"#003087","tp":"state",  "pub":1,"pf":0,
    "e_id":"1000", "ticker":"VTBR",
    "ir_urls":["https://www.vtb.ru/ir/statements/results/","https://smart-lab.ru/q/VTBR/f/y/"],
-   "base":{"roe":18.3,"nim":1.4,"cir":47.3,"cor":1.1,"h20":9.8,"src":"МСФО 2025","period":"2025"},
+   "base":{"roe":18.3,"nim":1.4,"cir":47.3,"cor":1.1,"h20":9.8,"src":"МСФО фев.2026","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"data"},
 
-  {"r":3, "n":"Газпромбанк",    "lo":"Г","lc":"#1B4D9A","tp":"state", "pub":0,"pf":0,
+  {"r":3,  "n":"Газпромбанк",    "lo":"Г","lc":"#1B4D9A","tp":"state",  "pub":0,"pf":0,
    "e_id":"2547", "ticker":None,
    "ir_urls":["https://www.gazprombank.ru/ir/results/","https://bosfera.ru/bo/gazprombank"],
-   "base":{"roe":10.1,"nim":3.0,"cir":48.6,"cor":None,"h20":11.5,"src":"МСФО 2025","period":"2025"},
+   "base":{"roe":10.1,"nim":3.0,"cir":48.6,"cor":None,"h20":11.5,"src":"МСФО мар.2026","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":1,"he":1},"st":"part"},
 
-  {"r":4, "n":"Альфа-Банк",     "lo":"А","lc":"#EF3124","tp":"private","pub":0,"pf":0,
-   "e_id":"None", "ticker":None,
+  {"r":4,  "n":"Альфа-Банк",     "lo":"А","lc":"#EF3124","tp":"private","pub":0,"pf":0,
+   "e_id":None, "ticker":None,
    "ir_urls":["https://alfabank.ru/alfa-investor/","https://bosfera.ru/bo/alfa-bank"],
-   "base":{"roe":21.0,"nim":5.8,"cir":42.0,"cor":2.7,"h20":13.0,"src":"МСФО 2025","period":"2025"},
+   "base":{"roe":21.0,"nim":5.8,"cir":42.0,"cor":2.7,"h20":13.0,"src":"МСФО апр.2026","period":"2025"},
    "est":{"re":1,"ne":1,"ce":1,"oe":1,"he":1},"st":"part"},
 
-  {"r":5, "n":"Россельхозбанк", "lo":"Р","lc":"#2E7D32","tp":"state", "pub":0,"pf":0,
+  {"r":5,  "n":"Россельхозбанк", "lo":"Р","lc":"#2E7D32","tp":"state",  "pub":0,"pf":0,
    "e_id":"2749", "ticker":None,
    "ir_urls":["https://www.rshb.ru/about/reports-conclusion/msfo/","https://bosfera.ru/bo/rosselkhozbank"],
-   "base":{"roe":14.5,"nim":2.7,"cir":50.0,"cor":None,"h20":12.4,"src":"МСФО 2025","period":"2025"},
+   "base":{"roe":14.5,"nim":2.7,"cir":50.0,"cor":None,"h20":12.4,"src":"МСФО мар.2026","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":1,"he":1},"st":"part"},
 
-  {"r":6, "n":"МКБ",            "lo":"М","lc":"#7B1FA2","tp":"private","pub":1,"pf":0,
+  {"r":6,  "n":"МКБ",            "lo":"М","lc":"#7B1FA2","tp":"private","pub":1,"pf":0,
    "e_id":"2096", "ticker":"CBOM",
    "ir_urls":["https://ir.mkb.ru/investor-relations/reports/ifrs","https://smart-lab.ru/q/CBOM/f/y/"],
    "base":{"roe":8.9,"nim":1.9,"cir":33.8,"cor":15.1,"h20":11.0,"src":"Smart-lab LTM 2026","period":"LTM"},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"data"},
 
-  {"r":7, "n":"Т-Технологии",   "lo":"Т","lc":"#111111","tp":"private","pub":1,"pf":0,
-   "e_id":"None", "ticker":"T",
+  {"r":7,  "n":"Т-Технологии",   "lo":"Т","lc":"#111111","tp":"private","pub":1,"pf":0,
+   "e_id":None, "ticker":"T",
    "ir_urls":["https://t-technologies.ru/results/","https://smart-lab.ru/q/T/f/y/"],
-   "base":{"roe":29.1,"nim":10.8,"cir":34.7,"cor":6.5,"h20":12.5,"src":"МСФО 2025","period":"2025"},
+   "base":{"roe":29.1,"nim":10.8,"cir":34.7,"cor":6.5,"h20":12.5,"src":"МСФО мар.2026","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":1},"st":"data"},
 
-  {"r":8, "n":"Совкомбанк",     "lo":"С","lc":"#E65100","tp":"private","pub":1,"pf":0,
-   "e_id":"None", "ticker":"SVCB",
+  {"r":8,  "n":"Совкомбанк",     "lo":"С","lc":"#E65100","tp":"private","pub":1,"pf":0,
+   "e_id":None, "ticker":"SVCB",
    "ir_urls":["https://sovcombank.ru/about/disclosure/financial-statements/","https://smart-lab.ru/q/SVCB/f/y/"],
-   "base":{"roe":15.0,"nim":5.3,"cir":57.0,"cor":2.5,"h20":13.0,"src":"МСФО 2025","period":"2025"},
+   "base":{"roe":15.0,"nim":5.3,"cir":57.0,"cor":2.5,"h20":13.0,"src":"МСФО мар.2026","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":1},"st":"data"},
 
-  {"r":9, "n":"Банк ДОМ.РФ",   "lo":"Д","lc":"#1565C0","tp":"state", "pub":1,"pf":1,
-   "e_id":"None", "ticker":None,
-   "ir_urls":["https://domrfbank.ru/about/information/msfo/","https://domrfbank.ru/about/press/"],
-   "base":{"roe":21.6,"nim":3.7,"cir":28.3,"cor":0.7,"h20":13.5,"src":"МСФО 2025","period":"2025"},
-   "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":1},"st":"data"},
-
-  {"r":10,"n":"ПСБ",            "lo":"П","lc":"#AD1457","tp":"state", "pub":0,"pf":0,
-   "e_id":"None", "ticker":None,
-   "ir_urls":["https://www.psbank.ru/Bank/Investors/IFRS"],
-   "base":{"roe":None,"nim":None,"cir":None,"cor":None,"h20":None,"src":"убыток −19.1 млрд","period":"2025"},
-   "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"loss"},
-
-  {"r":11,"n":"Юникредит Банк", "lo":"U","lc":"#c00000","tp":"foreign","pub":0,"pf":0,
+  {"r":9,  "n":"Банк ДОМ.РФ",   "lo":"Д","lc":"#1565C0","tp":"state",  "pub":1,"pf":1,
    "e_id":None, "ticker":None,
-   "ir_urls":[],
+   "ir_urls":["https://domrfbank.ru/about/information/msfo/","https://domrfbank.ru/about/press/"],
+   "base":{"roe":21.6,"nim":3.7,"cir":28.3,"cor":0.7,"h20":13.5,"src":"МСФО фев.2026","period":"2025"},
+   "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":1},"st":"data"},
+
+  {"r":10, "n":"ПСБ",            "lo":"П","lc":"#AD1457","tp":"state",  "pub":0,"pf":0,
+   "e_id":None, "ticker":None,
+   "ir_urls":["https://www.psbank.ru/Bank/Investors/IFRS","https://www.psbank.ru/bank/investors/ras"],
+   "base":{"roe":30.8,"nim":3.45,"cir":45.1,"cor":None,"h20":None,"src":"МСФО 1кв.2026 (устойч.)","period":"1кв2026"},
+   "est":{"re":1,"ne":1,"ce":1,"oe":1,"he":0},"st":"part"},
+
+  {"r":11, "n":"Юникредит Банк", "lo":"U","lc":"#c00000","tp":"foreign","pub":0,"pf":0,
+   "e_id":None, "ticker":None,
+   "ir_urls":["https://www.unicreditbank.ru/ru/about/shareholders-and-investors.html"],
    "base":{"roe":None,"nim":None,"cir":None,"cor":None,"h20":None,"src":"уход до сер.2026","period":None},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"exit"},
 
-  {"r":12,"n":"Райффайзенбанк", "lo":"R","lc":"#FFD700","tp":"foreign","pub":0,"pf":0,
+  {"r":12, "n":"Райффайзенбанк", "lo":"R","lc":"#FFD700","tp":"foreign","pub":0,"pf":0,
    "e_id":"3292", "ticker":None,
    "ir_urls":["https://www.raiffeisen.ru/about/investors/information/","https://bosfera.ru/bo/raiffeisenbank"],
-   "base":{"roe":None,"nim":None,"cir":None,"cor":None,"h20":65.6,"src":"убыток −86 млн евро 2025","period":"2025"},
-   "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"loss"},
+   "base":{"roe":12.9,"nim":None,"cir":None,"cor":None,"h20":65.6,"src":"РСБУ 1кв.2026","period":"1кв2026"},
+   "est":{"re":1,"ne":0,"ce":0,"oe":0,"he":0},"st":"part"},
 
-  {"r":13,"n":"БСПБ",           "lo":"Б","lc":"#0D47A1","tp":"private","pub":1,"pf":0,
-   "e_id":"None", "ticker":"BSPB",
+  {"r":13, "n":"БСПБ",           "lo":"Б","lc":"#0D47A1","tp":"private","pub":1,"pf":0,
+   "e_id":None, "ticker":"BSPB",
    "ir_urls":["https://www.bspb.ru/investors/financial-statements/IFRS","https://smart-lab.ru/q/BSPB/f/y/"],
-   "base":{"roe":18.1,"nim":7.4,"cir":29.0,"cor":2.0,"h20":14.0,"src":"МСФО 2025","period":"2025"},
+   "base":{"roe":18.1,"nim":7.4,"cir":29.0,"cor":2.0,"h20":14.0,"src":"МСФО мар.2026","period":"2025"},
    "est":{"re":0,"ne":1,"ce":1,"oe":1,"he":1},"st":"data"},
 
-  {"r":14,"n":"МТС Банк",       "lo":"М","lc":"#E53935","tp":"private","pub":1,"pf":0,
-   "e_id":"None", "ticker":"MBNK",
+  {"r":14, "n":"МТС Банк",       "lo":"М","lc":"#E53935","tp":"private","pub":1,"pf":0,
+   "e_id":None, "ticker":"MBNK",
    "ir_urls":["https://www.mtsbank.ru/investors-and-shareholders/results/","https://smart-lab.ru/q/MBNK/f/y/"],
-   "base":{"roe":14.5,"nim":7.2,"cir":35.7,"cor":5.5,"h20":12.0,"src":"МСФО 2025","period":"2025"},
+   "base":{"roe":14.5,"nim":7.2,"cir":35.7,"cor":5.5,"h20":12.0,"src":"МСФО мар.2026","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":1,"he":1},"st":"data"},
 
-  {"r":15,"n":"Новикомбанк",    "lo":"Н","lc":"#1565C0","tp":"state", "pub":0,"pf":0,
+  {"r":15, "n":"Новикомбанк",    "lo":"Н","lc":"#0D47A1","tp":"state",  "pub":0,"pf":0,
    "e_id":"9789", "ticker":None,
-   "ir_urls":["https://novikombank.ru/about/disclosure/financial-reports/","https://ratings.ru/ratings/?search=новикомбанк"],
+   "ir_urls":["https://novikombank.ru/about/disclosure/financial-reports/","https://ratings.ru/ratings/press-releases/?search=новикомбанк"],
    "base":{"roe":25.0,"nim":None,"cir":None,"cor":None,"h20":15.2,"src":"НКР 9м.2025","period":"9м2025"},
    "est":{"re":1,"ne":0,"ce":0,"oe":1,"he":0},"st":"part"},
 
-  {"r":16,"n":"Уралсиб",        "lo":"У","lc":"#00695C","tp":"private","pub":0,"pf":0,
-   "e_id":"None", "ticker":None,
+  {"r":16, "n":"Уралсиб",        "lo":"У","lc":"#00695C","tp":"private","pub":0,"pf":0,
+   "e_id":None, "ticker":None,
    "ir_urls":["https://uralsib.ru/about/investors/","https://bosfera.ru/bo/bank-uralsib"],
-   "base":{"roe":10.1,"nim":None,"cir":None,"cor":None,"h20":None,"src":"РСБУ 2025","period":"2025"},
+   "base":{"roe":10.1,"nim":None,"cir":None,"cor":None,"h20":None,"src":"РСБУ апр.2026","period":"2025"},
    "est":{"re":1,"ne":0,"ce":0,"oe":0,"he":0},"st":"part"},
 
-  {"r":17,"n":"Ак Барс",        "lo":"А","lc":"#558B2F","tp":"private","pub":0,"pf":0,
+  {"r":17, "n":"Ак Барс",        "lo":"А","lc":"#558B2F","tp":"private","pub":0,"pf":0,
    "e_id":"2975", "ticker":None,
    "ir_urls":["https://www.akbars.ru/about/free-info/reports/","https://cbonds.ru/company/AKBARS/"],
    "base":{"roe":14.3,"nim":None,"cir":None,"cor":None,"h20":13.9,"src":"МСФО мар.2026","period":"2025"},
    "est":{"re":1,"ne":0,"ce":0,"oe":1,"he":0},"st":"part"},
 
-  {"r":18,"n":"БМ-Банк",        "lo":"О","lc":"#4527A0","tp":"state", "pub":0,"pf":0,
+  {"r":18, "n":"БМ-Банк",        "lo":"О","lc":"#4527A0","tp":"state",  "pub":0,"pf":0,
    "e_id":None, "ticker":None,
    "ir_urls":[],
    "base":{"roe":None,"nim":None,"cir":None,"cor":None,"h20":None,"src":"правопреемник Открытия с 01.01.2025, присоединение к ВТБ отложено","period":None},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"nd"},
 
-  {"r":19,"n":"Банк Россия",    "lo":"Р","lc":"#1A237E","tp":"private","pub":0,"pf":0,
+  {"r":19, "n":"Банк Россия",    "lo":"Р","lc":"#1A237E","tp":"private","pub":0,"pf":0,
    "e_id":None, "ticker":None,
    "ir_urls":[],
-   "base":{"roe":None,"nim":None,"cir":None,"cor":None,"h20":None,"src":"данные закрыты","period":None},
+   "base":{"roe":None,"nim":None,"cir":None,"cor":None,"h20":None,"src":"данные закрыты (санкции с 2014)","period":None},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"nd"},
-
-  {"r":20,"n":"Экспобанк",      "lo":"Э","lc":"#006064","tp":"private","pub":0,"pf":0,
-   "e_id":None, "ticker":None,
-   "ir_urls":["https://expobank.ru/about/report/","https://cbonds.ru/company/254443/"],
-   "base":{"roe":14.0,"nim":None,"cir":None,"cor":None,"h20":None,"src":"МСФО авг.2025","period":"1П2025"},
-   "est":{"re":1,"ne":0,"ce":0,"oe":1,"he":0},"st":"part"},
-
-  {"r":21,"n":"Синара Банк",    "lo":"С","lc":"#37474F","tp":"private","pub":0,"pf":0,
-   "e_id":None, "ticker":None,
-   "ir_urls":["https://sinara.ru/raskrytie-informacii/publikuemaya-otchetnost-banka","https://cbonds.ru/company/sinara/"],
-   "base":{"roe":None,"nim":None,"cir":None,"cor":None,"h20":None,"src":"убыток −2.12 млрд 2025","period":"2025"},
-   "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"loss"},
 ]
 
 
@@ -500,40 +488,17 @@ def build_signals(banks):
 
 # ── ПАРСИНГ ОТКРЫТЫХ ИСТОЧНИКОВ ДЛЯ АК БАРС / ЭКСПОБАНК / СИНАРА ────────
 OPEN_SOURCES = {
-    # Для всех банков парсим ir_urls из BANKS + новостные ленты
-    # Дополнительные источники для банков без биржевого листинга
-    15: {  # Новикомбанк
+    15: {
         "name": "Новикомбанк",
-        "urls": [
-            "https://novikombank.ru/about/disclosure/financial-reports/",
-            "https://ratings.ru/ratings/press-releases/?search=новикомбанк",
-            "https://cbonds.ru/company/novikombank/",
-        ],
+        "urls": ["https://novikombank.ru/about/disclosure/financial-reports/",
+                 "https://cbonds.ru/company/novikombank/"],
         "news_url": "https://cbonds.ru/news/?search=Новикомбанк+МСФО",
     },
-    17: {  # Ак Барс
+    17: {
         "name": "Ак Барс",
-        "urls": [
-            "https://www.akbars.ru/about/free-info/reports/",
-            "https://cbonds.ru/company/AKBARS/",
-        ],
+        "urls": ["https://www.akbars.ru/about/free-info/reports/",
+                 "https://cbonds.ru/company/AKBARS/"],
         "news_url": "https://cbonds.ru/news/?search=Ак+Барс+МСФО",
-    },
-    20: {  # Экспобанк
-        "name": "Экспобанк",
-        "urls": [
-            "https://expobank.ru/about/report/",
-            "https://cbonds.ru/company/254443/",
-        ],
-        "news_url": "https://asros.ru/news/?search=Экспобанк+МСФО",
-    },
-    21: {  # Синара
-        "name": "Синара Банк",
-        "urls": [
-            "https://sinara.ru/raskrytie-informacii/publikuemaya-otchetnost-banka",
-            "https://cbonds.ru/company/sinara/",
-        ],
-        "news_url": "https://cbonds.ru/news/?search=Синара+МСФО",
     },
 }
 
