@@ -7,7 +7,8 @@
 """
 
 import json, re, sys, time, hashlib, io
-import urllib.request, urllib.error
+import urllib.request
+import urllib.parse, urllib.error
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -86,7 +87,7 @@ BANKS = [
    "base":{"roe":21.6,"nim":3.7,"cir":28.3,"cor":0.7,"h20":13.5,"src":"МСФО фев.2026","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":1},"st":"data"},
 
-  {"r":10, "n":"ПСБ",            "lo":"П","lc":"#AD1457","tp":"state",  "pub":0,"pf":0,
+  {"r":10, "n":"Промсвязьбанк",            "lo":"П","lc":"#AD1457","tp":"state",  "pub":0,"pf":0,
    "e_id":None, "ticker":None,
    "ir_urls":["https://www.psbank.ru/Bank/Investors/IFRS","https://www.psbank.ru/bank/investors/ras"],
    "base":{"roe":30.8,"nim":3.45,"cir":45.1,"cor":None,"h20":None,"src":"МСФО 1кв.2026 (устойч.)","period":"1кв2026"},
@@ -580,6 +581,347 @@ def parse_open_source_bank(rank: int) -> dict:
     return result
 
 
+
+# ── ПАРСИНГ ДАННЫХ ПФ ИЗ ЦБ РФ ───────────────────────────────────────
+# ЦБ РФ публикует Excel-файл с данными по банкам ежемесячно
+# URL: cbr.ru/statistics/bank_sector/equity_const_financing/
+# Файл содержит: банк, кредиты застройщикам (млрд руб.), счета эскроу
+
+CBR_PF_URLS = [
+    # Пробуем последние месяцы по шаблону
+    "https://www.cbr.ru/vfs/statistics/bank_sector/pf/pf_{year}{month:02d}.xlsx",
+    "https://cbr.ru/vfs/statistics/bank_sector/equity_const_financing/pf_{year}{month:02d}.xlsx",
+]
+
+# Статичные данные из последнего отчёта ЦБ РФ 1кв.2025
+# Обновляются вручную при выходе нового квартального отчёта
+# Источник: cbr.ru/collection/collection/file/55905/pf_2025_q1.pdf
+CBR_PF_SHARES = {
+    "Сбербанк":       {"pf_share": 40.0, "pf_trn": 3.48, "asset_rank": 1},
+    "ВТБ":            {"pf_share": 14.0, "pf_trn": 1.22, "asset_rank": 2},
+    "Банк ДОМ.РФ":   {"pf_share": 17.0, "pf_trn": 1.48, "asset_rank": 9},
+    "Газпромбанк":    {"pf_share": 6.0,  "pf_trn": 0.52, "asset_rank": 3},
+    "Альфа-Банк":     {"pf_share": 4.0,  "pf_trn": 0.35, "asset_rank": 4},
+    "Промсвязьбанк":  {"pf_share": 3.0,  "pf_trn": 0.26, "asset_rank": 10},
+    "Россельхозбанк": {"pf_share": 2.0,  "pf_trn": 0.18, "asset_rank": 5},
+    "МКБ":            {"pf_share": 1.0,  "pf_trn": 0.09, "asset_rank": 6},
+    "Совкомбанк":     {"pf_share": 1.0,  "pf_trn": 0.09, "asset_rank": 8},
+    "БСПБ":           {"pf_share": 0.5,  "pf_trn": 0.04, "asset_rank": 13},
+    "МТС Банк":       {"pf_share": 0.5,  "pf_trn": 0.04, "asset_rank": 14},
+    "Ак Барс":        {"pf_share": 0.3,  "pf_trn": 0.03, "asset_rank": 17},
+    "Новикомбанк":    {"pf_share": 0.2,  "pf_trn": 0.02, "asset_rank": 15},
+    "Уралсиб":        {"pf_share": 0.2,  "pf_trn": 0.02, "asset_rank": 16},
+}
+
+def fetch_cbr_pf_excel() -> dict:
+    """
+    Пытается скачать Excel с сайта ЦБ РФ с актуальными данными по ПФ.
+    Возвращает словарь {bank_name: {pf_share, pf_trn, asset_rank}} или пустой dict.
+    """
+    from datetime import datetime, timedelta
+    import urllib.request, re
+
+    # Пробуем последние 3 месяца
+    today = datetime.today()
+    for delta in [0, 1, 2]:
+        dt = today - timedelta(days=30*delta)
+        year, month = dt.year, dt.month
+
+        for url_tpl in CBR_PF_URLS:
+            url = url_tpl.format(year=year, month=month)
+            try:
+                req = urllib.request.Request(url, headers={
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                    'Referer': 'https://www.cbr.ru/',
+                })
+                with urllib.request.urlopen(req, timeout=15) as r:
+                    data = r.read()
+                if len(data) > 5000:  # валидный Excel
+                    print(f"    ✓ ЦБ ПФ Excel: {url[-30:]} ({len(data)//1024} КБ)")
+                    return parse_cbr_pf_excel(data)
+            except Exception as e:
+                pass
+    
+    print("    → ЦБ РФ недоступен, используем статичные данные")
+    return {}
+
+def parse_cbr_pf_excel(data: bytes) -> dict:
+    """Парсит Excel ЦБ РФ с данными по банкам ПФ."""
+    try:
+        import openpyxl, io
+        wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+        ws = wb.active
+        
+        result = {}
+        total = 0
+        rows = []
+        
+        for row in ws.iter_rows(values_only=True):
+            if row[0] and isinstance(row[0], str) and any(
+                kw in row[0] for kw in ['банк', 'Банк', 'сбер', 'Сбер', 'ВТБ']
+            ):
+                name = str(row[0]).strip()
+                # Пытаемся найти числовые данные
+                for val in row[1:]:
+                    if isinstance(val, (int, float)) and val > 0:
+                        rows.append((name, float(val)))
+                        total += float(val)
+                        break
+        
+        if rows and total > 0:
+            for name, vol in rows:
+                result[name] = {
+                    "pf_trn": round(vol / 1e12, 3) if vol > 1e9 else round(vol, 3),
+                    "pf_share": round(vol / total * 100, 1),
+                }
+            print(f"    ✓ Распарсено {len(result)} банков из Excel ЦБ")
+        
+        return result
+    except Exception as e:
+        print(f"    WARN parse_cbr_pf_excel: {e}")
+        return {}
+
+
+# ── CLOUDFLARE WORKER ПРОКСИ ─────────────────────────────────────────
+# Worker проксирует запросы через российские IP Cloudflare
+# Деплой: workers.cloudflare.com (бесплатно, 100k запросов/день)
+# После деплоя добавь URL в GitHub Secrets как CBR_PROXY_URL
+import os
+
+CF_PROXY_URL = os.environ.get('CBR_PROXY_URL', '')  # из GitHub Secrets
+
+def fetch_via_proxy(url: str) -> bytes:
+    """Загружает URL через Cloudflare Worker прокси."""
+    if not CF_PROXY_URL:
+        return fetch_direct(url)
+    
+    proxy_url = f"{CF_PROXY_URL.rstrip('/')}/?url={urllib.parse.quote(url, safe='')}"
+    try:
+        req = urllib.request.Request(proxy_url, headers={
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
+        })
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return r.read()
+    except Exception as e:
+        print(f"    WARN proxy: {e}, пробуем напрямую")
+        return fetch_direct(url)
+
+def fetch_direct(url: str) -> bytes:
+    """Прямой запрос без прокси."""
+    try:
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept-Language': 'ru-RU,ru;q=0.9',
+            'Referer': 'https://www.cbr.ru/',
+        })
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return r.read()
+    except Exception as e:
+        print(f"    ERR direct: {e}")
+        return b''
+
+def fetch_text_via_proxy(url: str) -> str:
+    """Загружает URL через прокси и возвращает текст."""
+    data = fetch_via_proxy(url)
+    return data.decode('utf-8', errors='replace') if data else ''
+
+# ── ПАРСИНГ ЦБ РФ — ДАННЫЕ ПФ ────────────────────────────────────────
+CBR_PF_PAGE = "https://www.cbr.ru/statistics/bank_sector/equity_const_financing/"
+
+def fetch_cbr_pf_live() -> dict:
+    """
+    Скачивает актуальные данные по ПФ с сайта ЦБ РФ через прокси.
+    Возвращает {bank_name: {pf_share, pf_trn, asset_rank}} или {}.
+    """
+    if not CF_PROXY_URL:
+        print("    → CBR_PROXY_URL не задан, используем статику")
+        return {}
+
+    print(f"    → Запрос к ЦБ РФ через прокси...")
+    
+    # Шаг 1: получаем страницу со списком файлов
+    html = fetch_text_via_proxy(CBR_PF_PAGE)
+    if not html or len(html) < 1000:
+        print(f"    → Страница не получена ({len(html)} байт)")
+        return {}
+
+    # Шаг 2: ищем ссылку на актуальный Excel файл
+    import re
+    xlsx_links = re.findall(
+        r'href=[^>]*>.*?</a>', html, re.I
+    ) or []
+    xlsx_links = [x for x in re.findall(r'href="([^"]+\.xlsx)"', html, re.I) if any(k in x.lower() for k in ["pfbalance","pf_banks","equity"])]
+    
+    if not xlsx_links:
+        # Ищем любой xlsx на странице
+        xlsx_links = re.findall(r'href="([^"]+\.xlsx?)"', html, re.I)
+    
+    print(f"    → Найдено Excel файлов: {len(xlsx_links)}")
+    
+    for link in xlsx_links[:3]:
+        # Дополняем relative URLs
+        if link.startswith('/'):
+            link = 'https://www.cbr.ru' + link
+        elif not link.startswith('http'):
+            link = 'https://www.cbr.ru/' + link
+        
+        print(f"    → Скачиваем: {link[-60:]}")
+        data = fetch_via_proxy(link)
+        
+        if data and len(data) > 5000:
+            result = parse_cbr_xlsx(data)
+            if result:
+                print(f"    ✓ Распарсено {len(result)} банков из ЦБ РФ")
+                return result
+    
+    # Если Excel не нашли — парсим HTML таблицу прямо со страницы
+    return parse_cbr_html_table(html)
+
+def parse_cbr_xlsx(data: bytes) -> dict:
+    """Парсит Excel файл ЦБ РФ с данными по ПФ банков."""
+    try:
+        import openpyxl, io
+        wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+        
+        result = {}
+        total_vol = 0
+        rows_data = []
+        
+        for ws in wb.worksheets:
+            for row in ws.iter_rows(values_only=True):
+                if not row or not row[0]:
+                    continue
+                name = str(row[0]).strip()
+                # Пропускаем заголовки
+                if any(h in name.lower() for h in ['банк', 'наименование', 'итого', 'всего']):
+                    if 'итого' in name.lower() or 'всего' in name.lower():
+                        continue
+                    # Это строка с данными банка
+                    for val in row[1:]:
+                        if isinstance(val, (int, float)) and val > 100:  # млн руб
+                            rows_data.append((name, float(val)))
+                            total_vol += float(val)
+                            break
+        
+        if rows_data and total_vol > 0:
+            for name, vol in rows_data:
+                # Нормализуем имя банка для совпадения с нашим списком
+                normalized = normalize_bank_name(name)
+                result[normalized] = {
+                    'pf_trn':   round(vol / 1e6, 3),  # конвертируем млн → трлн
+                    'pf_share': round(vol / total_vol * 100, 1),
+                }
+        
+        return result
+    except Exception as e:
+        print(f"    WARN parse_cbr_xlsx: {e}")
+        return {}
+
+def parse_cbr_html_table(html: str) -> dict:
+    """Парсит HTML таблицу на странице ЦБ РФ если Excel не доступен."""
+    import re
+    result = {}
+    
+    # Ищем таблицу с данными банков
+    rows = re.findall(r'<tr[^>]*>(.*?)</tr>', html, re.S | re.I)
+    
+    total_vol = 0
+    rows_data = []
+    
+    for row in rows:
+        cells = re.findall(r'<t[dh][^>]*>(.*?)</t[dh]>', row, re.S | re.I)
+        cells = [re.sub(r'<[^>]+>', '', c).strip() for c in cells]
+        
+        if len(cells) < 2:
+            continue
+        
+        name = cells[0]
+        if len(name) < 3 or any(h in name.lower() for h in ['итого', 'всего', '№']):
+            continue
+        
+        # Пытаемся найти числовое значение
+        for cell in cells[1:]:
+            num_str = cell.replace(' ', '').replace(',', '.')
+            try:
+                val = float(num_str)
+                if val > 100:  # минимальный объём в млрд руб
+                    rows_data.append((name, val))
+                    total_vol += val
+                    break
+            except:
+                pass
+    
+    if rows_data and total_vol > 0:
+        for name, vol in rows_data:
+            normalized = normalize_bank_name(name)
+            result[normalized] = {
+                'pf_trn':   round(vol / 1000, 3),  # млрд → трлн
+                'pf_share': round(vol / total_vol * 100, 1),
+            }
+    
+    return result
+
+def normalize_bank_name(name: str) -> str:
+    """Нормализует название банка из ЦБ к нашему формату."""
+    name = name.strip()
+    mapping = {
+        'сбербанк': 'Сбербанк',
+        'втб': 'ВТБ',
+        'газпромбанк': 'Газпромбанк',
+        'альфа': 'Альфа-Банк',
+        'россельхоз': 'Россельхозбанк',
+        'дом.рф': 'Банк ДОМ.РФ',
+        'домрф': 'Банк ДОМ.РФ',
+        'промсвязь': 'Промсвязьбанк',
+        'псб': 'Промсвязьбанк',
+        'совкомбанк': 'Совкомбанк',
+        'мкб': 'МКБ',
+        'т-банк': 'Т-Технологии',
+        'тинькофф': 'Т-Технологии',
+        'бспб': 'БСПБ',
+        'санкт-петербург': 'БСПБ',
+        'мтс': 'МТС Банк',
+        'уралсиб': 'Уралсиб',
+        'ак барс': 'Ак Барс',
+        'новиком': 'Новикомбанк',
+        'райффайзен': 'Райффайзенбанк',
+    }
+    lower = name.lower()
+    for key, val in mapping.items():
+        if key in lower:
+            return val
+    return name
+
+
+def update_pf_data(banks: list) -> list:
+    """
+    Обновляет данные ПФ для каждого банка.
+    1. Пробует ЦБ РФ через Cloudflare Worker прокси
+    2. Fallback — статичные данные CBR_PF_SHARES из последнего отчёта
+    """
+    print("\n── Данные ПФ (ЦБ РФ) ──")
+    
+    # Пробуем получить свежие данные через прокси
+    live_data = fetch_cbr_pf_live()
+    
+    for b in banks:
+        name = b.get("n", "")
+        
+        # Берём данные: сначала live, потом статика
+        pf_info = live_data.get(name) or CBR_PF_SHARES.get(name, {})
+        
+        b["pf"]         = 1 if pf_info.get("pf_share", 0) > 0 else 0
+        b["pf_share"]   = pf_info.get("pf_share")
+        b["pf_trn"]     = pf_info.get("pf_trn")
+        b["asset_rank"] = pf_info.get("asset_rank", b.get("r", 99))
+    
+    # Сортируем по доле ПФ
+    banks.sort(key=lambda b: (-(b.get("pf_share") or 0), b.get("asset_rank", 99)))
+    
+    print(f"    ✓ ПФ-данные обновлены для {sum(1 for b in banks if b.get('pf_share'))} банков")
+    return banks
+
+
 def main():
     print(f"{'='*60}")
     print(f"Банковский Радар — агент обновления PDF")
@@ -587,16 +929,26 @@ def main():
     print(f"{'='*60}\n")
 
     # Загружаем предыдущий data.json
+    # ВАЖНО: принимаем prev_latest только для банков из текущего BANKS
+    # Это предотвращает подмешивание устаревших данных при изменении списка
     prev_latest = {}
+    valid_banks = {b["r"]: b["n"] for b in BANKS}  # {rank: name}
     if OUTPUT.exists():
         try:
             prev = json.loads(OUTPUT.read_text("utf-8"))
+            skipped = 0
             for b in prev.get("banks", []):
-                if b.get("latest"):
-                    prev_latest[b["r"]] = b["latest"]
-            print(f"Предыдущие данные: {prev.get('updated_at','?')}\n")
+                r = b.get("r")
+                n = b.get("n", "")
+                # Принимаем только если ранг И имя совпадают с текущим BANKS
+                if r in valid_banks and valid_banks[r] == n and b.get("latest"):
+                    prev_latest[r] = b["latest"]
+                else:
+                    skipped += 1
+            print(f"Предыдущие данные: {prev.get('updated_at','?')} "
+                  f"({len(prev_latest)} валидных, {skipped} устаревших — игнорируем)\n")
         except Exception as e:
-            print(f"WARN: {e}\n")
+            print(f"WARN prev_data: {e}\n")
 
     # ── Smart-lab: парсинг LTM данных для биржевых банков ──────────────
     print("\n── Smart-lab LTM ──")
@@ -775,6 +1127,9 @@ def main():
         }
         final_banks.append(record)
         time.sleep(0.5)
+
+    # Обновляем данные ПФ из ЦБ РФ
+    final_banks = update_pf_data(final_banks)
 
     kpi = compute_kpi(final_banks)
     signals = build_signals(final_banks)
