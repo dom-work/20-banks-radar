@@ -6,556 +6,127 @@
 <title>Банковский Радар · ПФ-мониторинг</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-/* ── СВЕТЛАЯ ТЕМА (по умолчанию) ── */
-[data-theme="light"] {
-  --green:       #6DBE45;
-  --green-dark:  #4fa32e;
-  --green-bg:    #f0f9ea;
-  --green-mid:   #d4edbc;
-  --bg:          #f5f6f8;
-  --surface:     #ffffff;
-  --surface2:    #f9fafb;
-  --border:      #e8eaed;
-  --border2:     #d1d5db;
-  --text:        #1a1d23;
-  --text2:       #6b7280;
-  --text3:       #9ca3af;
-  --red:         #ef4444;
-  --red-bg:      #fef2f2;
-  --yellow:      #d97706;
-  --yellow-bg:   #fffbeb;
-  --blue:        #2563eb;
-  --blue-bg:     #eff6ff;
-  --shadow-sm:   0 1px 3px rgba(0,0,0,.08);
-  --shadow:      0 4px 16px rgba(0,0,0,.08);
-  --row-alt:     #fafbfc;
-  --row-hover:   #f3f4f6;
-  --toggle-bg:   #e8eaed;
-  --toggle-icon: "🌙";
-}
-
-/* ── ТЁМНАЯ ТЕМА ── */
-[data-theme="dark"] {
-  --green:       #6DBE45;
-  --green-dark:  #8fd465;
-  --green-bg:    rgba(109,190,69,.12);
-  --green-mid:   rgba(109,190,69,.2);
-  --bg:          #0d0f11;
-  --surface:     #131619;
-  --surface2:    #1a1e22;
-  --border:      #252a2f;
-  --border2:     #2e3540;
-  --text:        #e2e6ea;
-  --text2:       #8a9099;
-  --text3:       #4e5560;
-  --red:         #f87171;
-  --red-bg:      rgba(239,68,68,.12);
-  --yellow:      #fbbf24;
-  --yellow-bg:   rgba(245,158,11,.12);
-  --blue:        #60a5fa;
-  --blue-bg:     rgba(37,99,235,.12);
-  --shadow-sm:   0 1px 3px rgba(0,0,0,.3);
-  --shadow:      0 4px 16px rgba(0,0,0,.3);
-  --row-alt:     rgba(255,255,255,.02);
-  --row-hover:   rgba(255,255,255,.04);
-  --toggle-bg:   #252a2f;
-  --toggle-icon: "☀️";
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Inter', -apple-system, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 14px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  transition: background .25s, color .25s;
-}
-
-/* ── HEADER ── */
-.hdr {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 20px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: var(--shadow-sm);
-  transition: background .25s, border-color .25s;
-}
-
-.logo { display: flex; align-items: center; gap: 12px; }
-
-.logo-mark {
-  width: 36px; height: 36px;
-  background: var(--green);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; color: #fff; letter-spacing: -.5px;
-}
-
-.logo-divider {
-  width: 1.5px; height: 24px;
-  background: var(--green); border-radius: 1px;
-}
-
-.logo-text  { font-size: 15px; font-weight: 600; }
-.logo-sub   { font-size: 11px; color: var(--text2); margin-top: 1px; }
-
-.hdr-right  { display: flex; align-items: center; gap: 10px; }
-
-.live-badge {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--green-bg);
-  border: 1px solid var(--green-mid);
-  border-radius: 20px; padding: 4px 10px;
-  font-size: 11px; font-weight: 500; color: var(--green-dark);
-}
-
-.live-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--green);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(109,190,69,.4); }
-  50%      { opacity:.7; box-shadow:0 0 0 4px rgba(109,190,69,0); }
-}
-
-#upd-time { font-size: 11px; color: var(--text3); }
-
-/* ── ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ── */
-.theme-toggle {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: var(--toggle-bg);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 16px;
-  transition: all .2s;
-  flex-shrink: 0;
-}
-
-.theme-toggle:hover {
-  border-color: var(--green);
-  background: var(--green-bg);
-}
-
-/* ── MAIN ── */
-.main { max-width: 1360px; margin: 0 auto; padding: 20px 16px; }
-
-/* ── KPI ── */
-.kpi-row {
-  display: grid;
-  grid-template-columns: repeat(5,1fr);
-  gap: 12px; margin-bottom: 20px;
-}
-
-.kpi {
-  background: var(--surface);
-  border-radius: 14px; padding: 16px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border);
-  position: relative; overflow: hidden;
-  transition: box-shadow .2s, background .25s;
-}
-
-.kpi:hover { box-shadow: var(--shadow); }
-
-.kpi-accent {
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  border-radius: 14px 14px 0 0;
-}
-
-.kpi.green  .kpi-accent { background: var(--green); }
-.kpi.blue   .kpi-accent { background: var(--blue); }
-.kpi.yellow .kpi-accent { background: var(--yellow); }
-.kpi.red    .kpi-accent { background: var(--red); }
-
-.kpi-label {
-  font-size: 10px; font-weight: 500;
-  text-transform: uppercase; letter-spacing: .06em;
-  color: var(--text2); margin-bottom: 8px;
-}
-
-.kpi-value { font-size: 24px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
-.kpi-sub   { font-size: 11px; color: var(--text2); }
-
-/* ── SECTION HEAD ── */
-.sec {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
-}
-
-.sec-title {
-  font-size: 15px; font-weight: 600;
-  display: flex; align-items: center; gap: 8px;
-}
-
-.sec-title::before {
-  content: ''; display: inline-block;
-  width: 3px; height: 16px;
-  background: var(--green); border-radius: 2px;
-}
-
-.pills { display: flex; gap: 6px; flex-wrap: wrap; }
-
-.pill {
-  padding: 5px 12px; border-radius: 20px;
-  border: 1.5px solid var(--border2);
-  background: var(--surface);
-  font-size: 12px; font-weight: 500;
-  color: var(--text2); cursor: pointer;
-  transition: all .15s; font-family: inherit;
-}
-
-.pill:hover {
-  border-color: var(--green);
-  color: var(--green-dark);
-  background: var(--green-bg);
-}
-
-.pill.on {
-  background: var(--green);
-  border-color: var(--green);
-  color: #fff;
-}
-
-/* ── CARD / TABLE ── */
-.card {
-  background: var(--surface);
-  border-radius: 14px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border);
-  overflow: hidden; margin-bottom: 20px;
-  transition: background .25s;
-}
-
-.tw { overflow-x: auto; }
-
-table { width: 100%; border-collapse: collapse; min-width: 860px; }
-
-th {
-  background: var(--surface2);
-  padding: 10px 12px; text-align: center;
-  font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: .05em;
-  color: var(--text2);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-  transition: background .25s;
-}
-
-th.l { text-align: left; }
-
-td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-  text-align: center; font-size: 12px;
-  vertical-align: middle;
-  transition: background .1s;
-}
-
-td.l { text-align: left; }
-tr:last-child td { border-bottom: none; }
-tr.alt td { background: var(--row-alt); }
-tr:hover td { background: var(--row-hover); }
-
-.bank-cell { display: flex; align-items: center; gap: 10px; }
-
-.bank-logo {
-  width: 32px; height: 32px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
-}
-
-.bank-name { font-weight: 600; font-size: 13px; }
-
-/* ── КЛИКАБЕЛЬНЫЙ ИСТОЧНИК ── */
-.bank-src {
-  font-size: 10px; color: var(--text3); margin-top: 2px;
-}
-
-.bank-src a {
-  color: var(--green-dark);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--green-mid);
-  transition: border-color .15s, color .15s;
-}
-
-.bank-src a:hover {
-  color: var(--green);
-  border-bottom-color: var(--green);
-}
-
-.pf-badge {
-  display: inline-block; font-size: 9px; font-weight: 600;
-  padding: 2px 6px; border-radius: 4px;
-  background: var(--green-bg); color: var(--green-dark);
-  border: 1px solid var(--green-mid); margin-left: 4px;
-}
-
-.vg  { color: #16a34a; font-weight: 700; }
-.vw  { color: var(--yellow); font-weight: 700; }
-.vr  { color: var(--red); font-weight: 700; }
-.vn  { color: var(--text3); }
-.v   { color: var(--text); font-weight: 600; }
-.est { font-size: 9px; color: var(--text3); }
-
-.rorwa-wrap { display: flex; align-items: center; gap: 6px; justify-content: center; }
-.rorwa-val  { font-size: 14px; font-weight: 700; }
-
-.bar { width: 40px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 2px; }
-
-.st-tag {
-  display: inline-block; font-size: 10px; font-weight: 500;
-  padding: 3px 8px; border-radius: 20px;
-}
-
-.st-data { background: var(--green-bg);  color: var(--green-dark); }
-.st-part { background: var(--yellow-bg); color: var(--yellow); }
-.st-loss { background: var(--red-bg);    color: var(--red); }
-.st-exit,.st-nd { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
-
-/* ── FEED ── */
-.feed-grid {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 16px; margin-bottom: 20px;
-}
-
-.signal-list { display: flex; flex-direction: column; gap: 10px; }
-
-.signal-card {
-  background: var(--surface);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 14px 16px;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow .2s, background .25s;
-}
-
-.signal-card:hover { box-shadow: var(--shadow); }
-.signal-card.high { border-left: 3px solid var(--green); }
-.signal-card.med  { border-left: 3px solid var(--yellow); }
-.signal-card.low  { border-left: 3px solid var(--border2); }
-
-.sig-top {
-  display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 8px;
-}
-
-.sig-bank { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
-
-.sig-score { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; }
-.sc-h { background: var(--green-bg);  color: var(--green-dark); }
-.sc-m { background: var(--yellow-bg); color: var(--yellow); }
-.sc-l { background: var(--surface2);  color: var(--text2); }
-
-.sig-text { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 8px; }
-
-/* ── КЛИКАБЕЛЬНЫЙ ИСТОЧНИК В СИГНАЛЕ ── */
-.sig-source {
-  font-size: 10px; color: var(--text3);
-  margin-bottom: 6px;
-}
-
-.sig-source a {
-  color: var(--green-dark); text-decoration: none;
-  border-bottom: 1px dashed var(--green-mid);
-}
-
-.sig-source a:hover { color: var(--green); }
-
-.sig-period {
-  display: inline-block;
-  font-size: 9px; font-weight: 600;
-  padding: 1px 6px; border-radius: 3px;
-  background: var(--green-bg); color: var(--green-dark);
-  border: 1px solid var(--green-mid);
-  margin-right: 4px; vertical-align: middle;
-}
-
-.sig-foot { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-
-.sig-tag {
-  font-size: 10px; font-weight: 500;
-  padding: 2px 8px; border-radius: 4px;
-  background: var(--surface2); color: var(--text2);
-  border: 1px solid var(--border);
-}
-
-.sig-time { font-size: 10px; color: var(--text3); margin-left: auto; }
-
-/* ── PANEL ── */
-.panel {
-  background: var(--surface);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  transition: background .25s;
-}
-
-.panel-header { background: var(--green); padding: 14px 16px; }
-.panel-header-title { font-size: 13px; font-weight: 600; color: #fff; }
-
-.panel-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-.panel-section-title {
-  font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: .06em;
-  color: var(--text2); margin-bottom: 8px;
-}
-
-.panel-text { font-size: 12px; color: var(--text2); line-height: 1.7; }
-.divl { border-top: 1px solid var(--border); padding-top: 14px; }
-
-.ins-row {
-  display: flex; gap: 8px;
-  font-size: 12px; color: var(--text2);
-  line-height: 1.5; margin-bottom: 8px;
-}
-
-.ins-row:last-child { margin-bottom: 0; }
-.ins-icon { flex-shrink: 0; font-size: 13px; margin-top: 1px; }
-
-/* ── SOURCES LEGEND ── */
-.sources-section {
-  background: var(--surface);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-sm);
-}
-
-.sources-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.source-link {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  text-decoration: none;
-  color: var(--text2);
-  font-size: 12px; font-weight: 500;
-  transition: all .15s;
-}
-
-.source-link:hover {
-  border-color: var(--green);
-  background: var(--green-bg);
-  color: var(--green-dark);
-}
-
-.source-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-}
-
-/* ── FOOTER ── */
-.foot {
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  padding: 12px 20px;
-  display: flex; align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap; gap: 8px; margin-top: 8px;
-  transition: background .25s;
-}
-
-.foot-note { font-size: 11px; color: var(--text3); }
-.foot-m    { font-size: 11px; color: var(--text2); }
-.foot-m span { color: var(--green-dark); font-weight: 500; }
-
-/* ── LOADING ── */
-.ldg {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.2);
-  backdrop-filter: blur(4px);
-  z-index: 200;
-  align-items: center; justify-content: center;
-  flex-direction: column; gap: 14px;
-}
-
-.ldg.show { display: flex; }
-
-.spin {
-  width: 36px; height: 36px;
-  border: 3px solid var(--border);
-  border-top-color: var(--green);
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-.ldg-txt { font-size: 13px; font-weight: 500; color: var(--text); }
-
-
-/* ── ТУЛТИП ПФ ── */
-.pf-badge {
-  position: relative;
-  cursor: pointer;
-}
-
-.pf-tooltip {
-  display: none;
-  position: absolute;
-  z-index: 500;
-  background: var(--surface);
-  border: 1px solid var(--green-mid);
-  border-radius: 10px;
-  padding: 10px 14px;
-  max-width: 260px;
-  box-shadow: var(--shadow);
-  font-size: 12px;
-  color: var(--text2);
-  line-height: 1.6;
-}
-
-.pf-tooltip.show { display: block; }
-
-.pf-tooltip-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--green-dark);
-  margin-bottom: 4px;
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  .kpi-row { grid-template-columns: repeat(2,1fr); }
-  .feed-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 480px) {
-  .kpi-row { grid-template-columns: 1fr 1fr; }
-  .hdr, .main { padding-left: 12px; padding-right: 12px; }
-}
-
-/* ── МОДАЛЬНОЕ ОКНО ФОРМУЛЫ ── */
+[data-theme="light"]{--green:#6DBE45;--green-dark:#4fa32e;--green-bg:#f0f9ea;--green-mid:#d4edbc;--bg:#f5f6f8;--surface:#ffffff;--surface2:#f9fafb;--border:#e8eaed;--border2:#d1d5db;--text:#1a1d23;--text2:#6b7280;--text3:#9ca3af;--red:#ef4444;--red-bg:#fef2f2;--yellow:#d97706;--yellow-bg:#fffbeb;--blue:#2563eb;--blue-bg:#eff6ff;--shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow:0 4px 16px rgba(0,0,0,.08);--row-alt:#fafbfc;--row-hover:#f3f4f6;}
+[data-theme="dark"]{--green:#6DBE45;--green-dark:#8fd465;--green-bg:rgba(109,190,69,.12);--green-mid:rgba(109,190,69,.2);--bg:#0d0f11;--surface:#131619;--surface2:#1a1e22;--border:#252a2f;--border2:#2e3540;--text:#e2e6ea;--text2:#8a9099;--text3:#4e5560;--red:#f87171;--red-bg:rgba(239,68,68,.12);--yellow:#fbbf24;--yellow-bg:rgba(245,158,11,.12);--blue:#60a5fa;--blue-bg:rgba(37,99,235,.12);--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow:0 4px 16px rgba(0,0,0,.3);--row-alt:rgba(255,255,255,.02);--row-hover:rgba(255,255,255,.04);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);transition:background .25s}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.logo-divider{width:1.5px;height:24px;background:var(--green);border-radius:1px}
+.logo-text{font-size:15px;font-weight:600}
+.logo-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.live-badge{display:flex;align-items:center;gap:6px;background:var(--green-bg);border:1px solid var(--green-mid);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:500;color:var(--green-dark)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(109,190,69,.4)}50%{opacity:.7;box-shadow:0 0 0 4px rgba(109,190,69,0)}}
+#upd-time{font-size:11px;color:var(--text3)}
+.theme-toggle{width:36px;height:36px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--green);background:var(--green-bg)}
+.main{max-width:1360px;margin:0 auto;padding:20px 16px}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:var(--surface);border-radius:14px;padding:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border);position:relative;overflow:hidden;transition:box-shadow .2s}
+.kpi:hover{box-shadow:var(--shadow)}
+.kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.kpi.green .kpi-accent{background:var(--green)}
+.kpi.blue  .kpi-accent{background:var(--blue)}
+.kpi.yellow .kpi-accent{background:var(--yellow)}
+.kpi.red .kpi-accent{background:var(--red)}
+.kpi-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:8px}
+.kpi-value{font-size:24px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-sub{font-size:11px;color:var(--text2)}
+.sec{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.sec-title{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:inline-block;width:3px;height:16px;background:var(--green);border-radius:2px}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
+.pill:hover{border-color:var(--green);color:var(--green-dark);background:var(--green-bg)}
+.pill.on{background:var(--green);border-color:var(--green);color:#fff}
+.card{background:var(--surface);border-radius:14px;box-shadow:var(--shadow-sm);border:1px solid var(--border);overflow:hidden;margin-bottom:20px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:960px}
+th{background:var(--surface2);padding:10px 12px;text-align:center;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap}
+th.l{text-align:left}
+th[data-metric]{cursor:pointer;transition:background .15s}
+th[data-metric]:hover{background:var(--green-bg)!important;color:var(--green-dark)!important}
+th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
+td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:center;font-size:12px;vertical-align:middle}
+td.l{text-align:left}
+tr:last-child td{border-bottom:none}
+tr.alt td{background:var(--row-alt)}
+tr:hover td{background:var(--row-hover)}
+.bank-cell{display:flex;align-items:center;gap:10px}
+.bank-logo{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.bank-name{font-weight:600;font-size:13px}
+.bank-src{font-size:10px;color:var(--text3);margin-top:2px}
+.bank-src a{color:var(--green-dark);text-decoration:none;border-bottom:1px dashed var(--green-mid)}
+.bank-src a:hover{color:var(--green)}
+.pf-badge{display:inline-block;font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--green-bg);color:var(--green-dark);border:1px solid var(--green-mid);margin-left:4px;cursor:pointer;user-select:none}
+.pf-badge:hover{background:var(--green-mid)}
+.vg{color:#16a34a;font-weight:700}
+.vw{color:var(--yellow);font-weight:700}
+.vr{color:var(--red);font-weight:700}
+.vn{color:var(--text3)}
+.est{font-size:9px;color:var(--text3)}
+.rorwa-wrap{display:flex;align-items:center;gap:6px;justify-content:center}
+.rorwa-val{font-size:14px;font-weight:700}
+.bar{width:40px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px}
+.pf-wrap{display:flex;align-items:center;gap:5px;justify-content:center}
+.pf-val{font-size:12px;font-weight:700;color:var(--blue)}
+.pf-bar{width:36px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.pf-bar-fill{height:100%;border-radius:2px;background:var(--blue)}
+.st-tag{display:inline-block;font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px}
+.st-data{background:var(--green-bg);color:var(--green-dark)}
+.st-part{background:var(--yellow-bg);color:var(--yellow)}
+.st-loss{background:var(--red-bg);color:var(--red)}
+.st-exit,.st-nd{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.feed-grid{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:20px}
+.signal-list{display:flex;flex-direction:column;gap:10px}
+.signal-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:14px 16px;box-shadow:var(--shadow-sm);transition:box-shadow .2s}
+.signal-card:hover{box-shadow:var(--shadow)}
+.signal-card.high{border-left:3px solid var(--green)}
+.signal-card.med{border-left:3px solid var(--yellow)}
+.signal-card.low{border-left:3px solid var(--border2)}
+.sig-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sig-bank{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.sig-score{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px}
+.sc-h{background:var(--green-bg);color:var(--green-dark)}
+.sc-m{background:var(--yellow-bg);color:var(--yellow)}
+.sc-l{background:var(--surface2);color:var(--text2)}
+.sig-text{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px}
+.sig-foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sig-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.sig-time{font-size:10px;color:var(--text3);margin-left:auto}
+.panel{background:var(--surface);border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden}
+.panel-header{background:var(--green);padding:14px 16px}
+.panel-header-title{font-size:13px;font-weight:600;color:#fff}
+.panel-body{padding:16px;display:flex;flex-direction:column;gap:14px}
+.panel-section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:8px}
+.panel-text{font-size:12px;color:var(--text2);line-height:1.7}
+.divl{border-top:1px solid var(--border);padding-top:14px}
+.ins-row{display:flex;gap:8px;font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px}
+.ins-icon{flex-shrink:0;font-size:13px;margin-top:1px}
+.sources-section{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
+.sources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:10px}
+.source-link{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);text-decoration:none;color:var(--text2);font-size:12px;font-weight:500;transition:all .15s}
+.source-link:hover{border-color:var(--green);background:var(--green-bg);color:var(--green-dark)}
+.source-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.foot{border-top:1px solid var(--border);background:var(--surface);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:8px}
+.foot-note{font-size:11px;color:var(--text3)}
+.foot-m{font-size:11px;color:var(--text2)}
+.foot-m span{color:var(--green-dark);font-weight:500}
+/* ТУЛТИП ПФ */
+.pf-tooltip{display:none;position:absolute;z-index:500;background:var(--surface);border:1px solid var(--green-mid);border-radius:10px;padding:12px 14px;max-width:260px;box-shadow:var(--shadow);font-size:12px;color:var(--text2);line-height:1.6}
+.pf-tooltip.show{display:block}
+.pf-tooltip b{color:var(--green-dark)}
+/* ФОРМУЛА МОДАЛ */
 .formula-modal{display:none;position:fixed;inset:0;z-index:300;align-items:center;justify-content:center;padding:20px}
 .formula-modal.show{display:flex}
 .formula-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(3px)}
 .formula-card{position:relative;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:24px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:pop-in .18s ease}
 @keyframes pop-in{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
-.formula-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:var(--text2);transition:all .15s}
-.formula-close:hover{background:var(--border2);color:var(--text)}
+.formula-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:var(--text2)}
 .f-tag{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--green-dark);background:var(--green-bg);border:1px solid var(--green-mid);border-radius:4px;padding:2px 8px;margin-bottom:10px}
 .f-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:3px}
 .f-full{font-size:11px;color:var(--text2);margin-bottom:14px}
@@ -569,14 +140,11 @@ tr:hover td { background: var(--row-hover); }
 .rg{background:var(--green-bg);color:var(--green-dark)}
 .rw{background:var(--yellow-bg);color:var(--yellow)}
 .rr{background:var(--red-bg);color:var(--red)}
-th[data-metric]{cursor:pointer;transition:background .15s}
-th[data-metric]:hover{background:var(--green-bg)!important;color:var(--green-dark)!important}
-th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
-
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}.feed-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.kpi-row{grid-template-columns:1fr 1fr}.hdr,.main{padding-left:12px;padding-right:12px}}
 </style>
 </head>
 <body>
-
 <header class="hdr">
   <div class="logo">
     <div class="logo-mark">BR</div>
@@ -594,42 +162,14 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
 </header>
 
 <main class="main">
-
-  <!-- KPI -->
   <div class="kpi-row">
-    <div class="kpi green">
-      <div class="kpi-accent"></div>
-      <div class="kpi-label">Медиана ROE · ТОП~20</div>
-      <div class="kpi-value" id="k-roe">—</div>
-      <div class="kpi-sub">данные разных периодов</div>
-    </div>
-    <div class="kpi green">
-      <div class="kpi-accent"></div>
-      <div class="kpi-label">Лидер iRoRWA</div>
-      <div class="kpi-value" id="k-rorwa">—</div>
-      <div class="kpi-sub" id="k-rorwa-sub">—</div>
-    </div>
-    <div class="kpi blue">
-      <div class="kpi-accent"></div>
-      <div class="kpi-label">Лучший CIR · ПФ</div>
-      <div class="kpi-value" id="k-cir">—</div>
-      <div class="kpi-sub" id="k-cir-sub">—</div>
-    </div>
-    <div class="kpi yellow">
-      <div class="kpi-accent"></div>
-      <div class="kpi-label">Мин. H20.0</div>
-      <div class="kpi-value" id="k-h20">—</div>
-      <div class="kpi-sub" id="k-h20-sub">—</div>
-    </div>
-    <div class="kpi blue">
-      <div class="kpi-accent"></div>
-      <div class="kpi-label">Портфель ПФ · рынок</div>
-      <div class="kpi-value" id="k-pf">—</div>
-      <div class="kpi-sub" id="k-pf-sub">ЦБ РФ · эскроу 99%</div>
-    </div>
+    <div class="kpi green"><div class="kpi-accent"></div><div class="kpi-label">Медиана ROE · ТОП~20</div><div class="kpi-value" id="k-roe">—</div><div class="kpi-sub">данные разных периодов</div></div>
+    <div class="kpi green"><div class="kpi-accent"></div><div class="kpi-label">Лидер iRoRWA</div><div class="kpi-value" id="k-rorwa">—</div><div class="kpi-sub" id="k-rorwa-sub">—</div></div>
+    <div class="kpi blue"><div class="kpi-accent"></div><div class="kpi-label">Лучший CIR · ПФ</div><div class="kpi-value" id="k-cir">—</div><div class="kpi-sub" id="k-cir-sub">—</div></div>
+    <div class="kpi yellow"><div class="kpi-accent"></div><div class="kpi-label">Мин. H20.0</div><div class="kpi-value" id="k-h20">—</div><div class="kpi-sub" id="k-h20-sub">—</div></div>
+    <div class="kpi blue"><div class="kpi-accent"></div><div class="kpi-label">Портфель ПФ · рынок</div><div class="kpi-value" id="k-pf">—</div><div class="kpi-sub" id="k-pf-sub">ЦБ РФ · эскроу</div></div>
   </div>
 
-  <!-- MATRIX -->
   <div class="sec">
     <div class="sec-title">Матрица метрик · МСФО актуальные данные</div>
     <div class="pills">
@@ -638,10 +178,10 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
       <button class="pill" onclick="fil('private',this)">Частные</button>
       <button class="pill" onclick="fil('pf',this)">ПФ-фокус</button>
       <button class="pill" onclick="fil('listed',this)">Биржевые</button>
-      <button class="pill" onclick="srt('rank',this)">По активам</button>
       <button class="pill" onclick="srt('pf',this)">↓ Доля ПФ</button>
       <button class="pill" onclick="srt('rorwa',this)">↓ iRoRWA</button>
       <button class="pill" onclick="srt('roe',this)">↓ ROE</button>
+      <button class="pill" onclick="srt('rank',this)">По активам</button>
     </div>
   </div>
 
@@ -656,15 +196,14 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
         <th data-metric="cor" onclick="showFormula('cor')">COR<br><span style="font-size:9px;font-weight:400;text-transform:none">↓ лучше</span></th>
         <th data-metric="rorwa" onclick="showFormula('rorwa')" style="background:var(--green-bg)">★ iRoRWA<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--green-dark)">ROE × H20.0</span></th>
         <th data-metric="h20" onclick="showFormula('h20')">H20.0</th>
-        <th style="background:var(--blue-bg);color:var(--blue)" title="Доля банка в портфеле ПФ строительства жилья (эскроу). Источник: ЦБ РФ">Доля ПФ<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">ЦБ РФ</span></th>
-        <th title="Место банка по размеру активов (ЦБ РФ)"># активы</th>
+        <th style="background:var(--blue-bg);color:var(--blue)">Доля ПФ<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">ЦБ РФ</span></th>
+        <th title="Место по активам"># акт.</th>
         <th>Статус</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table></div>
   </div>
 
-  <!-- FEED -->
   <div class="sec">
     <div class="sec-title">Лента сигналов</div>
     <div class="pills">
@@ -678,136 +217,71 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
   <div class="feed-grid">
     <div class="signal-list" id="sigs"></div>
     <div class="panel">
-      <div class="panel-header">
-        <div class="panel-header-title">Аналитический вывод</div>
-      </div>
+      <div class="panel-header"><div class="panel-header-title">Аналитический вывод</div></div>
       <div class="panel-body">
         <div class="panel-text" id="summary">Загрузка...</div>
-        <div class="divl">
-          <div class="panel-section-title">Ключевые наблюдения</div>
-          <div id="insights"></div>
-        </div>
-        <div class="divl">
-          <div class="panel-section-title">Прогнозы 2026–2030</div>
-          <div id="forecasts"></div>
-        </div>
+        <div class="divl"><div class="panel-section-title">Ключевые наблюдения</div><div id="insights"></div></div>
+        <div class="divl"><div class="panel-section-title">Прогнозы 2026–2030</div><div id="forecasts"></div></div>
       </div>
     </div>
   </div>
 
-  <!-- SOURCES -->
-  <div class="sec">
-    <div class="sec-title">Источники данных</div>
-  </div>
+  <div class="sec"><div class="sec-title">Источники данных</div></div>
   <div class="sources-section">
     <div class="sources-grid">
-      <a class="source-link" href="https://smart-lab.ru/q/SBER/f/y/" target="_blank">
-        <span class="source-dot" style="background:#21A038"></span>Сбербанк IR
-      </a>
-      <a class="source-link" href="https://smart-lab.ru/q/VTBR/f/y/" target="_blank">
-        <span class="source-dot" style="background:#003087"></span>ВТБ IR
-      </a>
-      <a class="source-link" href="https://www.akm.ru/news/?q=Газпромбанк+МСФО" target="_blank">
-        <span class="source-dot" style="background:#1B4D9A"></span>Газпромбанк IR
-      </a>
-      <a class="source-link" href="https://alfabank.ru/alfa-investor/" target="_blank">
-        <span class="source-dot" style="background:#EF3124"></span>Альфа-Банк IR
-      </a>
-      <a class="source-link" href="https://www.rshb.ru/about/reports-conclusion/msfo/" target="_blank">
-        <span class="source-dot" style="background:#2E7D32"></span>Россельхозбанк МСФО
-      </a>
-      <a class="source-link" href="https://smart-lab.ru/q/CBOM/f/y/" target="_blank">
-        <span class="source-dot" style="background:#7B1FA2"></span>МКБ IR
-      </a>
-      <a class="source-link" href="https://smart-lab.ru/q/T/f/y/" target="_blank">
-        <span class="source-dot" style="background:#111111"></span>Т-Технологии IR
-      </a>
-      <a class="source-link" href="https://smart-lab.ru/q/SVCB/f/y/" target="_blank">
-        <span class="source-dot" style="background:#E65100"></span>Совкомбанк IR
-      </a>
-      <a class="source-link" href="https://domrfbank.ru/about/information/msfo/" target="_blank">
-        <span class="source-dot" style="background:#1565C0"></span>Банк ДОМ.РФ МСФО
-      </a>
-      <a class="source-link" href="https://www.psbank.ru/Bank/Investors/IFRS" target="_blank">
-        <span class="source-dot" style="background:#AD1457"></span>ПСБ МСФО
-      </a>
-      <a class="source-link" href="https://smart-lab.ru/q/BSPB/f/y/" target="_blank">
-        <span class="source-dot" style="background:#0D47A1"></span>БСПБ МСФО
-      </a>
-      <a class="source-link" href="https://smart-lab.ru/q/MBNK/f/y/" target="_blank">
-        <span class="source-dot" style="background:#E53935"></span>МТС Банк IR
-      </a>
-      <a class="source-link" href="https://bosfera.ru/press-release" target="_blank">
-        <span class="source-dot" style="background:#6b7280"></span>Банковское обозрение
-      </a>
-      <a class="source-link" href="https://www.akm.ru/news/?type=bank" target="_blank">
-        <span class="source-dot" style="background:#2563eb"></span>AKM новости
-      </a>
-      <a class="source-link" href="https://www.cbr.ru/banking_sector/bank_ranking/" target="_blank">
-        <span class="source-dot" style="background:#ef4444"></span>ЦБ РФ рэнкинг
-      </a>
-      <a class="source-link" href="https://bosfera.ru/press-release" target="_blank">
-        <span class="source-dot" style="background:#f59e0b"></span>bosfera.ru
-      </a>
+      <a class="source-link" href="https://www.sberbank.ru/ru/investor-relations" target="_blank"><span class="source-dot" style="background:#21A038"></span>Сбербанк IR</a>
+      <a class="source-link" href="https://smart-lab.ru/q/VTBR/f/y/" target="_blank"><span class="source-dot" style="background:#003087"></span>ВТБ · Smart-lab</a>
+      <a class="source-link" href="https://bosfera.ru/bo/gazprombank" target="_blank"><span class="source-dot" style="background:#1B4D9A"></span>Газпромбанк · bosfera</a>
+      <a class="source-link" href="https://alfabank.ru/alfa-investor/" target="_blank"><span class="source-dot" style="background:#EF3124"></span>Альфа-Банк IR</a>
+      <a class="source-link" href="https://www.rshb.ru/about/reports-conclusion/msfo/" target="_blank"><span class="source-dot" style="background:#2E7D32"></span>Россельхозбанк МСФО</a>
+      <a class="source-link" href="https://smart-lab.ru/q/CBOM/f/y/" target="_blank"><span class="source-dot" style="background:#7B1FA2"></span>МКБ · Smart-lab</a>
+      <a class="source-link" href="https://smart-lab.ru/q/T/f/y/" target="_blank"><span class="source-dot" style="background:#111111"></span>Т-Технологии · Smart-lab</a>
+      <a class="source-link" href="https://smart-lab.ru/q/SVCB/f/y/" target="_blank"><span class="source-dot" style="background:#E65100"></span>Совкомбанк · Smart-lab</a>
+      <a class="source-link" href="https://domrfbank.ru/about/information/msfo/" target="_blank"><span class="source-dot" style="background:#1565C0"></span>Банк ДОМ.РФ МСФО</a>
+      <a class="source-link" href="https://www.psbank.ru/Bank/Investors/IFRS" target="_blank"><span class="source-dot" style="background:#AD1457"></span>Промсвязьбанк МСФО</a>
+      <a class="source-link" href="https://smart-lab.ru/q/BSPB/f/y/" target="_blank"><span class="source-dot" style="background:#0D47A1"></span>БСПБ · Smart-lab</a>
+      <a class="source-link" href="https://smart-lab.ru/q/MBNK/f/y/" target="_blank"><span class="source-dot" style="background:#E53935"></span>МТС Банк · Smart-lab</a>
+      <a class="source-link" href="https://novikombank.ru/about/disclosure/financial-reports/" target="_blank"><span class="source-dot" style="background:#0D47A1"></span>Новикомбанк IR</a>
+      <a class="source-link" href="https://uralsib.ru/about/investors/" target="_blank"><span class="source-dot" style="background:#00695C"></span>Уралсиб IR</a>
+      <a class="source-link" href="https://www.akbars.ru/about/free-info/reports/" target="_blank"><span class="source-dot" style="background:#558B2F"></span>Ак Барс IR</a>
+      <a class="source-link" href="https://www.cbr.ru/banking_sector/bank_ranking/" target="_blank"><span class="source-dot" style="background:#ef4444"></span>ЦБ РФ рэнкинг</a>
+      <a class="source-link" href="https://bosfera.ru" target="_blank"><span class="source-dot" style="background:#6b7280"></span>Банковское обозрение</a>
+      <a class="source-link" href="https://www.akm.ru/news/?type=bank" target="_blank"><span class="source-dot" style="background:#2563eb"></span>AKM новости</a>
     </div>
   </div>
+</main>
 
+<footer class="foot">
+  <div class="foot-note">Данные: МСФО пресс-релизы банков · ЦБ РФ · Smart-lab · bosfera.ru · AKM</div>
+  <div class="foot-m">iRoRWA = ROE × H20.0 · RWA закрыт ЦБ до окт.2026 · <span>авторский прокси</span> · Доля ПФ: ЦБ РФ эскроу</div>
+</footer>
 
-<!-- FORMULA MODAL -->
+<!-- ПФ ТУЛТИП -->
+<div class="pf-tooltip" id="pf-tooltip">
+  <b>Что означает значок ПФ?</b><br><br>
+  Банк активно работает в сегменте проектного финансирования жилья — выдаёт кредиты застройщикам и открывает счета эскроу.<br><br>
+  <b>Важно:</b> все показатели в таблице (ROE, NIM, CIR, COR, H20) — общие показатели банка по МСФО, а не только по ПФ-направлению.
+</div>
+
+<!-- ФОРМУЛА МОДАЛ -->
 <div class="formula-modal" id="formula-modal" onclick="closeFormula(event)">
   <div class="formula-backdrop"></div>
   <div class="formula-card">
     <button class="formula-close" onclick="closeFormula()">✕</button>
-    <div class="f-tag" id="fm-tag">ROE</div>
-    <div class="f-name" id="fm-name">Рентабельность капитала</div>
-    <div class="f-full" id="fm-full">Return on Equity</div>
-    <div class="f-box">
-      <div class="f-expr" id="fm-expr">Чистая прибыль / Собственный капитал × 100%</div>
-      <div class="f-vars" id="fm-vars"></div>
-    </div>
+    <div class="f-tag" id="fm-tag"></div>
+    <div class="f-name" id="fm-name"></div>
+    <div class="f-full" id="fm-full"></div>
+    <div class="f-box"><div class="f-expr" id="fm-expr"></div><div class="f-vars" id="fm-vars"></div></div>
     <div class="f-interp" id="fm-interp"></div>
     <div class="f-ranges" id="fm-ranges"></div>
   </div>
 </div>
 
-</main>
-
-<footer class="foot">
-  <div class="foot-note">Данные: МСФО пресс-релизы банков · Банковское обозрение · РБК · Smart-lab · AKM · ЦБ РФ</div>
-  <div class="foot-m">iRoRWA = ROE × H20.0 · RWA закрыт ЦБ до окт.2026 · <span>авторский прокси</span> · Доля ПФ: ЦБ РФ статистика эскроу</div>
-</footer>
-
-<div class="ldg" id="ldg">
-  <div class="spin"></div>
-  <div class="ldg-txt" id="ldg-txt">Загрузка данных...</div>
-</div>
-
 <script>
-// ── ТЕМА ─────────────────────────────────────────────────────────────
-const THEME_KEY = 'br-theme';
-
-function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem(THEME_KEY, next);
-  document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
-}
-
-// Восстанавливаем тему из localStorage
-(function() {
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved) {
-    document.documentElement.setAttribute('data-theme', saved);
-    document.getElementById('theme-btn').textContent = saved === 'dark' ? '☀️' : '🌙';
-  }
-})();
-
-// ── ССЫЛКИ НА ИСТОЧНИКИ ОТЧЁТНОСТИ ───────────────────────────────────
+// ── IR ССЫЛКИ (ключ = ранг банка) ─────────────────────────────────────
 const BANK_IR_URLS = {
   1:  'https://www.sberbank.ru/ru/investor-relations',
-  2:  'https://www.vtb.ru/ir/statements/results/',
+  2:  'https://smart-lab.ru/q/VTBR/f/y/',
   3:  'https://bosfera.ru/bo/gazprombank',
   4:  'https://alfabank.ru/alfa-investor/',
   5:  'https://www.rshb.ru/about/reports-conclusion/msfo/',
@@ -826,47 +300,52 @@ const BANK_IR_URLS = {
   19: 'https://bosfera.ru/bo/bank-rossiya',
 };
 
-// ── ДАННЫЕ ────────────────────────────────────────────────────────────
-let DATA = null;
-let filterType = 'all';
-let sortType   = 'rank';
-let feedFilter = 'all';
+// ── ТЕМА ──────────────────────────────────────────────────────────────
+const THEME_KEY = 'br-theme';
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme')==='light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem(THEME_KEY, next);
+  document.getElementById('theme-btn').textContent = next==='dark' ? '☀️' : '🌙';
+}
+(function(){
+  const saved = localStorage.getItem(THEME_KEY);
+  if(saved){
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('theme-btn').textContent = saved==='dark' ? '☀️' : '🌙';
+  }
+})();
 
-async function loadData() {
-  document.getElementById('ldg').classList.add('show');
-  try {
-    const r = await fetch('data.json?t=' + Date.now());
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+// ── ДАННЫЕ ────────────────────────────────────────────────────────────
+let DATA=null, filterType='all', sortType='rank', feedFilter='all';
+
+async function loadData(){
+  try{
+    const r = await fetch('data.json?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
     DATA = await r.json();
     render();
-  } catch(e) {
-    document.getElementById('ldg-txt').textContent = 'Ошибка загрузки: ' + e.message;
-    setTimeout(() => document.getElementById('ldg').classList.remove('show'), 3000);
-  } finally {
-    document.getElementById('ldg').classList.remove('show');
-  }
+  } catch(e){ console.error('Load error:',e); }
 }
 
-function render() {
-  if (!DATA) return;
-  renderKPI();
-  renderMatrix();
-  renderSignals();
-  renderPanel();
+function render(){
+  if(!DATA) return;
+  renderKPI(); renderMatrix(); renderSignals(); renderPanel();
   document.getElementById('upd-time').textContent = DATA.updated_at || DATA.updated || '—';
 }
 
-function renderKPI() {
-  const k = DATA.kpi || {};
-  document.getElementById('k-roe').textContent      = k.median_roe        ? k.median_roe+'%'        : '—';
-  document.getElementById('k-rorwa').textContent    = k.leader_rorwa_val  ? k.leader_rorwa_val+'%'  : '—';
-  document.getElementById('k-rorwa-sub').textContent= k.leader_rorwa_bank || '—';
-  document.getElementById('k-cir').textContent      = k.best_cir_pf_val   ? k.best_cir_pf_val+'%'   : '—';
-  document.getElementById('k-cir-sub').textContent  = k.best_cir_pf_bank  || '—';
-  document.getElementById('k-h20').textContent      = k.min_h20_val       ? k.min_h20_val+'%'       : '—';
-  document.getElementById('k-h20-sub').textContent  = k.min_h20_bank      || '—';
-  document.getElementById('k-pf').textContent = DATA.pf_total_trn ? DATA.pf_total_trn.toFixed(1)+' трлн' : (k.dom_rf_pf_portfolio || '—');
-  document.getElementById('k-pf-sub').textContent = DATA.pf_source ? 'Источник: '+DATA.pf_source : 'ЦБ РФ · эскроу 99%';
+function renderKPI(){
+  const k = DATA.kpi||{};
+  document.getElementById('k-roe').textContent   = k.median_roe ? k.median_roe+'%' : '—';
+  document.getElementById('k-rorwa').textContent = k.leader_rorwa_val ? k.leader_rorwa_val+'%' : '—';
+  document.getElementById('k-rorwa-sub').textContent = k.leader_rorwa_bank||'—';
+  document.getElementById('k-cir').textContent   = k.best_cir_pf_val ? k.best_cir_pf_val+'%' : '—';
+  document.getElementById('k-cir-sub').textContent  = k.best_cir_pf_bank||'—';
+  document.getElementById('k-h20').textContent   = k.min_h20_val ? k.min_h20_val+'%' : '—';
+  document.getElementById('k-h20-sub').textContent  = k.min_h20_bank||'—';
+  document.getElementById('k-pf').textContent    = DATA.pf_total_trn ? DATA.pf_total_trn.toFixed(1)+' трлн' : (k.dom_rf_pf_portfolio||'—');
+  document.getElementById('k-pf-sub').textContent   = DATA.pf_source ? 'Источник: '+DATA.pf_source : 'ЦБ РФ · эскроу';
 }
 
 function cR(v){return !v?'vn':v>=20?'vg':v>=15?'vw':'vr'}
@@ -875,14 +354,10 @@ function cC(v){return !v?'vn':v<=30?'vg':v<=50?'vw':'vr'}
 function cO(v){return !v?'vn':v<=1.5?'vg':v<=3?'vw':'vr'}
 function cW(v){return !v?'vn':v>=2.8?'vg':v>=1.5?'vw':'vr'}
 function cH(v){return !v?'vn':v>=13?'vg':v>=11?'vw':'vr'}
-
-function fv(v,e){
-  if(v===null||v===undefined) return '<span class="vn">—</span>';
-  return v.toFixed(1)+'%'+(e?'<sup class="est">~</sup>':'');
-}
+function fv(v,e){ if(v===null||v===undefined) return '<span class="vn">—</span>'; return v.toFixed(1)+'%'+(e?'<sup class="est">~</sup>':''); }
 
 function renderMatrix(){
-  let banks = [...(DATA.banks||[])];
+  let banks=[...(DATA.banks||[])];
   if(filterType==='state')   banks=banks.filter(b=>b.tp==='state');
   if(filterType==='private') banks=banks.filter(b=>b.tp==='private'||b.tp==='foreign');
   if(filterType==='listed')  banks=banks.filter(b=>b.pub);
@@ -892,303 +367,174 @@ function renderMatrix(){
   if(sortType==='rank')  banks.sort((a,b)=>a.r-b.r);
   if(sortType==='pf')    banks.sort((a,b)=>(b.pf_share||0)-(a.pf_share||0));
 
-  const stMap = {
-    data:'st-data данные', part:'st-part частично',
-    loss:'st-loss убыток', exit:'st-exit уходит', nd:'st-nd н/д'
-  };
+  const stMap={data:'st-data данные',part:'st-part частично',loss:'st-loss убыток',exit:'st-exit уходит',nd:'st-nd н/д'};
 
-  document.getElementById('tbody').innerHTML = banks.map((b,i) => {
-    const lc2 = b.lc==='#111111' ? '#F9D02A' : '#fff';
+  document.getElementById('tbody').innerHTML = banks.map((b,i)=>{
+    const lc2 = b.lc==='#111111'?'#F9D02A':'#fff';
     const pf  = b.pf ? '<span class="pf-badge" onclick="showPfTip(event)">ПФ</span>' : '';
     const cl  = cW(b.rorwa);
     const bc  = cl==='vg'?'#16a34a':cl==='vw'?'#d97706':'#ef4444';
 
     let rr = '<span class="vn">—</span>';
-    if (b.rorwa) {
-      rr = `<div class="rorwa-wrap">
-        <span class="rorwa-val ${cl}">${b.rorwa.toFixed(2)}%</span>
-        <div class="bar"><div class="bar-fill" style="width:${Math.min(100,b.rorwa/4.5*100)}%;background:${bc}"></div></div>
-      </div>`;
-    } else if (b.st==='loss') rr='<span class="st-tag st-loss">убыток</span>';
-    else if   (b.st==='exit') rr='<span class="st-tag st-exit">уходит</span>';
+    if(b.rorwa){
+      rr=`<div class="rorwa-wrap"><span class="rorwa-val ${cl}">${b.rorwa.toFixed(2)}%</span><div class="bar"><div class="bar-fill" style="width:${Math.min(100,b.rorwa/4.5*100)}%;background:${bc}"></div></div></div>`;
+    } else if(b.st==='loss') rr='<span class="st-tag st-loss">убыток</span>';
+    else if(b.st==='exit')  rr='<span class="st-tag st-exit">уходит</span>';
 
-    const [sc,sl] = (stMap[b.st]||'st-nd н/д').split(' ');
+    // Доля ПФ
+    let pfCell = '<span class="vn">—</span>';
+    if(b.pf_share && b.pf_share > 0){
+      pfCell=`<div class="pf-wrap"><span class="pf-val">${b.pf_share.toFixed(1)}%</span><div class="pf-bar"><div class="pf-bar-fill" style="width:${Math.min(100,b.pf_share/40*100)}%"></div></div></div>`;
+    }
 
-    // Кликабельный источник
+    const [sc,sl]=(stMap[b.st]||'st-nd н/д').split(' ');
     const irUrl = BANK_IR_URLS[b.r];
-    // Базовая дата (годовая МСФО)
-    const baseSrc = b.base ? b.base.src : b.src;
-    const baseSrcHtml = baseSrc
-      ? (irUrl ? `<a href="${irUrl}" target="_blank" rel="noopener">${baseSrc} ↗</a>` : baseSrc)
-      : '';
-
-    // Последняя доступная дата (квартальная)
-    const lat = b.latest;
-    const latSrcHtml = lat && lat.src
-      ? `<span style="color:var(--green-dark);font-weight:600">${lat.src}</span>`
-      : '';
-
-    // Если latest данные есть и отличаются от базы — показываем обе строки
-    const hasLatest = lat && lat.src && lat.src !== baseSrc;
-    const srcBlock = hasLatest
-      ? `${baseSrcHtml}<br/>${latSrcHtml}`
-      : baseSrcHtml;
-
-    // Для отображения используем latest если есть, иначе base
-    const dispRoe = (lat && lat.roe) || b.roe;
-    const dispNim = (lat && lat.nim) || b.nim;
-    const dispCir = (lat && lat.cir) || b.cir;
-    const dispCor = (lat && lat.cor) || b.cor;
-    const dispH20 = (lat && lat.h20) || b.h20;
-    const dispRorwa = (dispRoe && dispH20) ? (dispRoe * dispH20 / 100).toFixed(2) : b.rorwa;
+    const srcHtml = b.src ? (irUrl ? `<a href="${irUrl}" target="_blank" rel="noopener">${b.src} ↗</a>` : b.src) : '';
 
     return `<tr class="${i%2===1?'alt':''}">
       <td class="l" style="color:var(--text3);font-size:11px">${b.r}</td>
-      <td class="l">
-        <div class="bank-cell">
-          <div class="bank-logo" style="background:${b.lc};color:${lc2}">${b.lo}</div>
-          <div>
-            <div class="bank-name">${b.n}${pf}</div>
-            <div class="bank-src">${srcBlock}</div>
-          </div>
-        </div>
-      </td>
-      <td class="${cR(dispRoe)}">${fv(dispRoe,b.re)}</td>
-      <td class="${cN(dispNim)}">${fv(dispNim,b.ne)}</td>
-      <td class="${cC(dispCir)}">${fv(dispCir,b.ce)}</td>
-      <td class="${cO(dispCor)}">${fv(dispCor,b.oe)}</td>
+      <td class="l"><div class="bank-cell">
+        <div class="bank-logo" style="background:${b.lc};color:${lc2}">${b.lo}</div>
+        <div><div class="bank-name">${b.n}${pf}</div><div class="bank-src">${srcHtml}</div></div>
+      </div></td>
+      <td class="${cR(b.roe)}">${fv(b.roe,b.re)}</td>
+      <td class="${cN(b.nim)}">${fv(b.nim,b.ne)}</td>
+      <td class="${cC(b.cir)}">${fv(b.cir,b.ce)}</td>
+      <td class="${cO(b.cor)}">${fv(b.cor,b.oe)}</td>
       <td style="background:var(--green-bg)">${rr}</td>
-      <td class="${cH(dispH20)}">${dispH20?parseFloat(dispH20).toFixed(1)+'%'+(b.he?'<sup class="est">~</sup>':''):'<span class="vn">—</span>'}</td>
+      <td class="${cH(b.h20)}">${b.h20?b.h20.toFixed(1)+'%'+(b.he?'<sup class="est">~</sup>':''):'<span class="vn">—</span>'}</td>
+      <td style="background:var(--blue-bg)">${pfCell}</td>
+      <td style="font-size:11px;color:var(--text2)">${b.asset_rank||b.r}</td>
       <td><span class="st-tag ${sc}">${sl}</span></td>
     </tr>`;
   }).join('');
 }
 
 function renderSignals(){
-  let sigs = (DATA.signals||[]).filter(s=>feedFilter==='all'||s.type===feedFilter);
-  const pc = {high:'high',med:'med',low:'low'};
-  const sc = {high:'sc-h',med:'sc-m',low:'sc-l'};
-
-  document.getElementById('sigs').innerHTML = sigs.map(s=>{
-    // Ищем IR-URL банка по имени
-    const bankEntry = (DATA.banks||[]).find(b=>b.n===s.bank);
-    const irUrl = bankEntry ? BANK_IR_URLS[bankEntry.r] : null;
-    // Период + конкретный источник
-    const periodHtml = s.period
-      ? `<span class="sig-period">${s.period}</span>`
-      : '';
-    const srcLine = (s.src_label && s.src_url)
-      ? `<div class="sig-source">📄 ${periodHtml} <a href="${s.src_url}" target="_blank" rel="noopener">${s.src_label} ↗</a></div>`
-      : (s.src_label
-          ? `<div class="sig-source">📄 ${periodHtml} ${s.src_label}</div>`
-          : (irUrl
-              ? `<div class="sig-source">📄 ${periodHtml} <a href="${irUrl}" target="_blank" rel="noopener">${s.bank} IR ↗</a></div>`
-              : (periodHtml ? `<div class="sig-source">📄 ${periodHtml}</div>` : '')));
-
+  let sigs=(DATA.signals||[]).filter(s=>feedFilter==='all'||s.type===feedFilter);
+  const pc={high:'high',med:'med',low:'low'};
+  const sc={high:'sc-h',med:'sc-m',low:'sc-l'};
+  document.getElementById('sigs').innerHTML=sigs.map(s=>{
+    const bankEntry=(DATA.banks||[]).find(b=>b.n===s.bank);
+    const irUrl=bankEntry?BANK_IR_URLS[bankEntry.r]:null;
+    const srcLine=irUrl?`<div class="sig-source" style="font-size:10px;color:var(--text3);margin-bottom:6px">Источник: <a href="${irUrl}" target="_blank" rel="noopener" style="color:var(--green-dark)">${s.bank} IR ↗</a></div>`:'';
     return `<div class="signal-card ${pc[s.priority]||'low'}">
       <div class="sig-top">
-        <div class="sig-bank">
-          <div class="bank-logo" style="background:${s.lc};color:#fff;width:26px;height:26px;border-radius:6px;font-size:10px">${s.logo}</div>
-          ${s.bank}
-        </div>
+        <div class="sig-bank"><div class="bank-logo" style="background:${s.lc};color:#fff;width:26px;height:26px;border-radius:6px;font-size:10px">${s.logo}</div>${s.bank}</div>
         <div class="sig-score ${sc[s.priority]||'sc-l'}">SCORE ${s.score}</div>
       </div>
       <div class="sig-text">${s.text}</div>
       ${srcLine}
-      <div class="sig-foot">
-        ${(s.tags||[]).map(t=>`<span class="sig-tag">${t}</span>`).join('')}
-        <span class="sig-time">${s.time||''}</span>
-      </div>
+      <div class="sig-foot">${(s.tags||[]).map(t=>`<span class="sig-tag">${t}</span>`).join('')}<span class="sig-time">${s.time||''}</span></div>
     </div>`;
-  }).join('') || '<div style="color:var(--text3);padding:12px;font-size:12px">Нет сигналов</div>';
+  }).join('')||'<div style="color:var(--text3);padding:12px;font-size:12px">Нет сигналов</div>';
 }
 
 function renderPanel(){
-  document.getElementById('summary').textContent = DATA.summary||'—';
-  document.getElementById('insights').innerHTML  = (DATA.insights||[]).map(i=>
-    `<div class="ins-row"><span class="ins-icon">${i.icon}</span><span>${i.text}</span></div>`).join('');
-  document.getElementById('forecasts').innerHTML = (DATA.forecasts||[]).map(i=>
-    `<div class="ins-row"><span class="ins-icon" style="color:var(--green-dark)">${i.icon}</span><span>${i.text}</span></div>`).join('');
+  document.getElementById('summary').textContent=DATA.summary||'—';
+  document.getElementById('insights').innerHTML=(DATA.insights||[]).map(i=>`<div class="ins-row"><span class="ins-icon">${i.icon}</span><span>${i.text}</span></div>`).join('');
+  document.getElementById('forecasts').innerHTML=(DATA.forecasts||[]).map(i=>`<div class="ins-row"><span class="ins-icon" style="color:var(--green-dark)">${i.icon}</span><span>${i.text}</span></div>`).join('');
 }
 
+// ── ФИЛЬТРЫ И СОРТИРОВКА ──────────────────────────────────────────────
 function fil(f,btn){
   filterType=f;
   document.querySelectorAll('.pills .pill').forEach(b=>{
     if(['Все','Госбанки','Частные','ПФ-фокус','Биржевые'].includes(b.textContent)) b.classList.remove('on');
   });
-  btn.classList.add('on');
-  renderMatrix();
+  btn.classList.add('on'); renderMatrix();
 }
-
 function srt(s,btn){
   sortType=s;
   document.querySelectorAll('.pills .pill').forEach(b=>{
-    if(['По активам','↓ Доля ПФ','↓ iRoRWA','↓ ROE'].includes(b.textContent)) b.classList.remove('on');
+    if(['↓ Доля ПФ','↓ iRoRWA','↓ ROE','По активам'].includes(b.textContent)) b.classList.remove('on');
   });
-  btn.classList.add('on');
-  renderMatrix();
+  btn.classList.add('on'); renderMatrix();
 }
-
 function ff(f,btn){
   feedFilter=f;
   btn.parentElement.querySelectorAll('.pill').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderSignals();
+  btn.classList.add('on'); renderSignals();
 }
 
-loadData();
-setInterval(loadData, 5 * 60 * 1000);
+// ── ТУЛТИП ПФ ─────────────────────────────────────────────────────────
+function showPfTip(e){
+  e.stopPropagation();
+  e.preventDefault();
+  const tip = document.getElementById('pf-tooltip');
+  const rect = e.target.getBoundingClientRect();
+  const scrollY = window.scrollY||window.pageYOffset;
+  const scrollX = window.scrollX||window.pageXOffset;
+  let top  = rect.bottom + scrollY + 6;
+  let left = rect.left  + scrollX;
+  if(left + 270 > window.innerWidth) left = window.innerWidth - 275 + scrollX;
+  if(left < 4) left = 4;
+  tip.style.top  = top+'px';
+  tip.style.left = left+'px';
+  tip.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  if(!e.target.classList.contains('pf-badge')){
+    const tip = document.getElementById('pf-tooltip');
+    if(tip) tip.classList.remove('show');
+  }
+});
 
-// ── ФОРМУЛЫ МЕТРИК ─────────────────────────────────────────────────
+// ── ФОРМУЛЫ ───────────────────────────────────────────────────────────
 const FORMULAS = {
-  roe: {
-    tag: 'ROE',
-    name: 'Рентабельность капитала',
-    full: 'Return on Equity',
-    expr: 'Чистая прибыль\n──────────────── × 100%\nСобственный капитал',
-    vars: 'Чистая прибыль — итоговая прибыль по МСФО за период\nСобственный капитал — среднее за период (начало + конец ÷ 2)',
-    interp: 'Показывает сколько копеек прибыли банк зарабатывает на каждый рубль собственного капитала. Чем выше — тем эффективнее банк использует деньги акционеров.',
-    ranges: [
-      {cl:'rg', val:'≥ 20%', lbl:'Отлично'},
-      {cl:'rw', val:'15–20%', lbl:'Норма'},
-      {cl:'rr', val:'< 15%', lbl:'Слабо'},
-    ]
-  },
-  nim: {
-    tag: 'NIM',
-    name: 'Чистая процентная маржа',
-    full: 'Net Interest Margin',
-    expr: 'ЧПД\n──────────────────── × 100%\nСредние процентные активы',
-    vars: 'ЧПД — чистый процентный доход (проценты полученные минус уплаченные)\nПроцентные активы — кредиты, облигации и прочие активы, генерирующие % доход',
-    interp: 'Эффективность основного банковского бизнеса — разница между ставками по кредитам и депозитам. Высокий NIM = банк дорого продаёт деньги и дёшево привлекает.',
-    ranges: [
-      {cl:'rg', val:'≥ 4%', lbl:'Высокая'},
-      {cl:'rw', val:'2–4%', lbl:'Средняя'},
-      {cl:'rr', val:'< 2%', lbl:'Низкая'},
-    ]
-  },
-  cir: {
-    tag: 'CIR',
-    name: 'Операционная эффективность',
-    full: 'Cost-to-Income Ratio — Расходы / Доходы',
-    expr: 'Операционные расходы\n──────────────────────── × 100%\nЧистые операционные доходы',
-    vars: 'Операционные расходы — зарплаты, аренда, IT, реклама\nЧистые операционные доходы — ЧПД + комиссионные + прочие доходы (до резервов)',
-    interp: 'Сколько копеек тратит банк чтобы заработать рубль дохода. Чем НИЖЕ — тем эффективнее. Снижение CIR = рост операционного рычага.',
-    ranges: [
-      {cl:'rg', val:'≤ 30%', lbl:'Отлично'},
-      {cl:'rw', val:'30–50%', lbl:'Норма'},
-      {cl:'rr', val:'> 50%', lbl:'Неэффект.'},
-    ]
-  },
-  cor: {
-    tag: 'COR',
-    name: 'Стоимость риска',
-    full: 'Cost of Risk — Отчисления в резервы',
-    expr: 'Отчисления в резервы за период\n──────────────────────────────── × 100%\nСредний кредитный портфель',
-    vars: 'Отчисления в резервы — расходы на создание резервов под кредитные убытки (МСФО 9)\nКредитный портфель — средний за период (начало + конец ÷ 2)',
-    interp: 'Какой процент кредитного портфеля банк ежегодно «списывает» в резервы. Отражает качество заёмщиков и консервативность риск-политики.',
-    ranges: [
-      {cl:'rg', val:'≤ 1.5%', lbl:'Низкий риск'},
-      {cl:'rw', val:'1.5–3%', lbl:'Умеренный'},
-      {cl:'rr', val:'> 3%', lbl:'Высокий'},
-    ]
-  },
-  rorwa: {
-    tag: '★ iRoRWA',
-    name: 'Авторский прокси RoRWA',
-    full: 'Implicit Return on Risk-Weighted Assets',
-    expr: 'ROE × H20.0\n──────────────\n   100',
-    vars: 'ROE — рентабельность капитала (%)\nH20.0 — норматив достаточности капитала банковской группы (%)\n\nМатематическое тождество:\nROE = Прибыль/Капитал, H20.0 = Капитал/RWA\n→ ROE × H20.0 = Прибыль/RWA = RoRWA',
-    interp: 'RWA (взвешенные по риску активы) не раскрываются по решению ЦБ РФ от 19.12.2025 до октября 2026. iRoRWA — математически точный прокси: при совпадении базы капитала тождественен настоящему RoRWA.',
-    ranges: [
-      {cl:'rg', val:'≥ 2.8%', lbl:'Высокая'},
-      {cl:'rw', val:'1.5–2.8%', lbl:'Средняя'},
-      {cl:'rr', val:'< 1.5%', lbl:'Низкая'},
-    ]
-  },
-  h20: {
-    tag: 'H20.0',
-    name: 'Достаточность капитала группы',
-    full: 'Норматив Н20.0 — Basel III (ЦБ РФ)',
-    expr: 'Капитал банковской группы\n─────────────────────────── × 100%\nАктивы, взвешенные по риску (RWA)',
-    vars: 'Капитал — собственные средства группы по методологии ЦБ РФ\nRWA — Risk-Weighted Assets, активы взвешенные на коэффициенты риска\nМинимум по регулятору: 9.25% (с надбавками)',
-    interp: 'Буфер финансовой устойчивости. Показывает насколько банк выдержит убытки без нарушения регуляторных норм. Чем выше — тем больше запас прочности для роста и дивидендов.',
-    ranges: [
-      {cl:'rg', val:'≥ 13%', lbl:'Комфортно'},
-      {cl:'rw', val:'11–13%', lbl:'Умеренно'},
-      {cl:'rr', val:'< 11%', lbl:'Напряжённо'},
-    ]
-  },
+  roe:{tag:'ROE',name:'Рентабельность капитала',full:'Return on Equity',
+    expr:'Чистая прибыль\n──────────────── × 100%\nСобственный капитал',
+    vars:'Чистая прибыль — итоговая прибыль по МСФО\nСобственный капитал — среднее за период',
+    interp:'Сколько копеек прибыли банк зарабатывает на каждый рубль капитала акционеров.',
+    ranges:[{cl:'rg',val:'≥ 20%',lbl:'Отлично'},{cl:'rw',val:'15–20%',lbl:'Норма'},{cl:'rr',val:'< 15%',lbl:'Слабо'}]},
+  nim:{tag:'NIM',name:'Чистая процентная маржа',full:'Net Interest Margin',
+    expr:'ЧПД\n──────────────────── × 100%\nСредние процентные активы',
+    vars:'ЧПД — проценты полученные минус уплаченные\nПроцентные активы — кредиты, облигации',
+    interp:'Эффективность основного банковского бизнеса — разница между ставками по кредитам и депозитам.',
+    ranges:[{cl:'rg',val:'≥ 4%',lbl:'Высокая'},{cl:'rw',val:'2–4%',lbl:'Средняя'},{cl:'rr',val:'< 2%',lbl:'Низкая'}]},
+  cir:{tag:'CIR',name:'Операционная эффективность',full:'Cost-to-Income Ratio',
+    expr:'Операционные расходы\n──────────────────────── × 100%\nЧистые операционные доходы',
+    vars:'Расходы — зарплаты, аренда, IT\nДоходы — ЧПД + комиссионные + прочие',
+    interp:'Сколько копеек тратит банк чтобы заработать рубль дохода. Чем НИЖЕ — тем лучше.',
+    ranges:[{cl:'rg',val:'≤ 30%',lbl:'Отлично'},{cl:'rw',val:'30–50%',lbl:'Норма'},{cl:'rr',val:'> 50%',lbl:'Неэффект.'}]},
+  cor:{tag:'COR',name:'Стоимость риска',full:'Cost of Risk',
+    expr:'Отчисления в резервы\n──────────────────────────── × 100%\nСредний кредитный портфель',
+    vars:'Резервы — расходы по МСФО 9\nПортфель — среднее за период',
+    interp:'Какой процент портфеля банк ежегодно списывает в резервы. Ниже = лучше качество заёмщиков.',
+    ranges:[{cl:'rg',val:'≤ 1.5%',lbl:'Низкий'},{cl:'rw',val:'1.5–3%',lbl:'Умеренный'},{cl:'rr',val:'> 3%',lbl:'Высокий'}]},
+  rorwa:{tag:'★ iRoRWA',name:'Авторский прокси RoRWA',full:'Implicit Return on Risk-Weighted Assets',
+    expr:'ROE × H20.0\n──────────────\n   100',
+    vars:'ROE — рентабельность капитала (%)\nH20.0 — норматив достаточности капитала группы (%)\nRWA закрыт ЦБ РФ до октября 2026',
+    interp:'Математически тождественен RoRWA при совпадении базы капитала. Авторский прокси для оценки эффективности использования рискованных активов.',
+    ranges:[{cl:'rg',val:'≥ 2.8%',lbl:'Высокая'},{cl:'rw',val:'1.5–2.8%',lbl:'Средняя'},{cl:'rr',val:'< 1.5%',lbl:'Низкая'}]},
+  h20:{tag:'H20.0',name:'Достаточность капитала группы',full:'Норматив Н20.0 — Basel III (ЦБ РФ)',
+    expr:'Капитал банковской группы\n─────────────────────────── × 100%\nАктивы, взвешенные по риску (RWA)',
+    vars:'Капитал — собственные средства группы\nRWA — активы взвешенные на коэффициенты риска\nМинимум по регулятору: 9.25%',
+    interp:'Буфер финансовой устойчивости. Чем выше — тем больше запас прочности для роста и дивидендов.',
+    ranges:[{cl:'rg',val:'≥ 13%',lbl:'Комфортно'},{cl:'rw',val:'11–13%',lbl:'Умеренно'},{cl:'rr',val:'< 11%',lbl:'Напряжённо'}]},
 };
 
-function showFormula(metric) {
-  const f = FORMULAS[metric];
-  if (!f) return;
+function showFormula(metric){
+  const f=FORMULAS[metric]; if(!f) return;
   document.getElementById('fm-tag').textContent   = f.tag;
   document.getElementById('fm-name').textContent  = f.name;
   document.getElementById('fm-full').textContent  = f.full;
   document.getElementById('fm-expr').textContent  = f.expr;
   document.getElementById('fm-vars').textContent  = f.vars;
   document.getElementById('fm-interp').textContent= f.interp;
-  document.getElementById('fm-ranges').innerHTML  = f.ranges.map(r=>
-    `<div class="f-rng ${r.cl}"><span class="rv">${r.val}</span>${r.lbl}</div>`
-  ).join('');
+  document.getElementById('fm-ranges').innerHTML  = f.ranges.map(r=>`<div class="f-rng ${r.cl}"><span class="rv">${r.val}</span>${r.lbl}</div>`).join('');
   document.getElementById('formula-modal').classList.add('show');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
 }
-
-function closeFormula(e) {
-  if (e && e.target !== document.getElementById('formula-modal') && 
-      !e.target.classList.contains('formula-backdrop') &&
-      !e.target.classList.contains('formula-close')) return;
+function closeFormula(e){
+  if(e && e.target!==document.getElementById('formula-modal') && !e.target.classList.contains('formula-backdrop') && !e.target.classList.contains('formula-close')) return;
   document.getElementById('formula-modal').classList.remove('show');
-  document.body.style.overflow = '';
+  document.body.style.overflow='';
 }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeFormula({target:document.getElementById('formula-modal')}); });
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeFormula({target: document.getElementById('formula-modal')});
-});
-
-</script>
-
-<!-- ПФ ТУЛТИП -->
-<div class="pf-tooltip" id="pf-tooltip">
-  <div class="pf-tooltip-title">Что означает значок ПФ?</div>
-  Банк активно работает в сегменте проектного финансирования жилья — выдаёт кредиты застройщикам и открывает счета эскроу.<br><br>
-  <b>Важно:</b> все показатели в таблице (ROE, NIM, CIR, COR) — общие по банку согласно МСФО, а не только по ПФ-направлению.
-</div>
-
-<script>
-// ── ТУЛТИП ПФ ─────────────────────────────────────────────────────────
-function showPfTip(e) {
-  e.stopPropagation();
-  e.preventDefault();
-  const tip = document.getElementById('pf-tooltip');
-  const rect = e.target.getBoundingClientRect();
-  const scrollY = window.scrollY || window.pageYOffset;
-  const scrollX = window.scrollX || window.pageXOffset;
-
-  // Позиционируем под значком с учётом скролла
-  let top  = rect.bottom + scrollY + 6;
-  let left = rect.left  + scrollX;
-
-  // Не выходим за правый край экрана
-  const maxLeft = window.innerWidth - 270;
-  if (left > maxLeft) left = maxLeft;
-  if (left < 4) left = 4;
-
-  tip.style.top  = top + 'px';
-  tip.style.left = left + 'px';
-  tip.classList.toggle('show');
-}
-
-// Закрываем тултип при клике вне
-document.addEventListener('click', function(e) {
-  if (!e.target.classList.contains('pf-badge')) {
-    const tip = document.getElementById('pf-tooltip');
-    if (tip) tip.classList.remove('show');
-  }
-});
+loadData();
+setInterval(loadData, 5*60*1000);
 </script>
 </body>
 </html>
