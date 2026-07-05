@@ -198,7 +198,10 @@ tr:hover td{background:var(--row-hover)}
         <th data-metric="rorwa" onclick="showFormula('rorwa')" style="background:var(--green-bg)">★ iRoRWA<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--green-dark)">ROE × H20.0</span></th>
         <th data-metric="h20" onclick="showFormula('h20')">H20.0</th>
         <th style="background:var(--blue-bg);color:var(--blue);cursor:pointer" onclick="window.open('https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf','_blank')" title="Открыть отчёт ЦБ РФ о проектном финансировании 1кв.2026">Доля ПФ ↗<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">ЦБ РФ 1кв.2026</span></th>
-        <th style="cursor:pointer" onclick="window.open('https://1000bankov.ru/rating/','_blank')" title="Место банка по активам (ЦБ РФ, апрель 2026). Сортировка списка"># акт. ↗</th>
+        <th style="background:var(--blue-bg);color:var(--blue)" title="Кредитный портфель проектного финансирования банка, млрд руб. Оценка на основе доли рынка ЦБ РФ 1кв.2026">КП ПФ<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">млрд руб.~</span></th>
+        <th style="background:var(--blue-bg);color:var(--blue)" title="Остатки средств на счетах эскроу, млрд руб. Оценка на основе доли рынка ЦБ РФ 1кв.2026">Эскроу<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">млрд руб.~</span></th>
+        <th style="background:var(--blue-bg);color:var(--blue)" title="Коэффициент покрытия кредитов ПФ остатками на счетах эскроу = Эскроу / КП ПФ × 100%. Норма ≥ 70% (ЦБ РФ)">Эскроу/ПФ<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">коэф.~</span></th>
+        <th style="cursor:pointer" onclick="window.open('https://1000bankov.ru/rating/','_blank')" title="Место банка по активам (1000bankov.ru / ЦБ РФ форма 101, апрель 2026)"># акт. ↗</th>
         <th>Статус</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
