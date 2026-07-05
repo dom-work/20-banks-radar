@@ -24,7 +24,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 .theme-toggle{width:36px;height:36px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0}
 .theme-toggle:hover{border-color:var(--green);background:var(--green-bg)}
 .main{max-width:1360px;margin:0 auto;padding:20px 16px}
-.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px}
 .kpi{background:var(--surface);border-radius:14px;padding:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border);position:relative;overflow:hidden;transition:box-shadow .2s}
 .kpi:hover{box-shadow:var(--shadow)}
 .kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
@@ -140,7 +140,7 @@ tr:hover td{background:var(--row-hover)}
 .rg{background:var(--green-bg);color:var(--green-dark)}
 .rw{background:var(--yellow-bg);color:var(--yellow)}
 .rr{background:var(--red-bg);color:var(--red)}
-@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}.feed-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr);}.feed-grid{grid-template-columns:1fr}}
 @media(max-width:480px){.kpi-row{grid-template-columns:1fr 1fr}.hdr,.main{padding-left:12px;padding-right:12px}}
 </style>
 </head>
@@ -151,7 +151,7 @@ tr:hover td{background:var(--row-hover)}
     <div class="logo-divider"></div>
     <div>
       <div class="logo-text">Банковский Радар</div>
-      <div class="logo-sub">ТОП~20 · ПФ-мониторинг · МСФО</div>
+      <div class="logo-sub">ТОП-20 по ПФ · ранг по активам · МСФО</div>
     </div>
   </div>
   <div class="hdr-right">
@@ -168,10 +168,11 @@ tr:hover td{background:var(--row-hover)}
     <div class="kpi blue"><div class="kpi-accent"></div><div class="kpi-label">Лучший CIR · ПФ</div><div class="kpi-value" id="k-cir">—</div><div class="kpi-sub" id="k-cir-sub">—</div></div>
     <div class="kpi yellow"><div class="kpi-accent"></div><div class="kpi-label">Мин. H20.0</div><div class="kpi-value" id="k-h20">—</div><div class="kpi-sub" id="k-h20-sub">—</div></div>
     <div class="kpi blue"><div class="kpi-accent"></div><div class="kpi-label">Портфель ПФ · рынок</div><div class="kpi-value" id="k-pf">—</div><div class="kpi-sub" id="k-pf-sub">ЦБ РФ · эскроу</div></div>
+    <div class="kpi blue"><div class="kpi-accent"></div><div class="kpi-label">Покрытие эскроу · система</div><div class="kpi-value" id="k-coverage">—</div><div class="kpi-sub" id="k-coverage-sub">эскроу / портфель ПФ</div></div>
   </div>
 
   <div class="sec">
-    <div class="sec-title">Матрица метрик · МСФО актуальные данные</div>
+    <div class="sec-title">Матрица метрик · ТОП-20 банков по ПФ · ранг по активам</div>
     <div class="pills">
       <button class="pill on" onclick="fil('all',this)">Все</button>
       <button class="pill" onclick="fil('state',this)">Госбанки</button>
@@ -196,12 +197,17 @@ tr:hover td{background:var(--row-hover)}
         <th data-metric="cor" onclick="showFormula('cor')">COR<br><span style="font-size:9px;font-weight:400;text-transform:none">↓ лучше</span></th>
         <th data-metric="rorwa" onclick="showFormula('rorwa')" style="background:var(--green-bg)">★ iRoRWA<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--green-dark)">ROE × H20.0</span></th>
         <th data-metric="h20" onclick="showFormula('h20')">H20.0</th>
-        <th style="background:var(--blue-bg);color:var(--blue)">Доля ПФ<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">ЦБ РФ</span></th>
-        <th title="Место по активам"># акт.</th>
+        <th style="background:var(--blue-bg);color:var(--blue);cursor:pointer" onclick="window.open('https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf','_blank')" title="Открыть отчёт ЦБ РФ о проектном финансировании 1кв.2026">Доля ПФ ↗<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">ЦБ РФ 1кв.2026</span></th>
+        <th style="cursor:pointer" onclick="window.open('https://1000bankov.ru/rating/','_blank')" title="Место банка по активам (ЦБ РФ, апрель 2026). Сортировка списка"># акт. ↗</th>
         <th>Статус</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table></div>
+  </div>
+  <div style="font-size:11px;color:var(--text3);padding:4px 8px;margin-top:-12px;margin-bottom:16px">
+    Список: 20 крупнейших банков по портфелю проектного финансирования (ЦБ РФ 2кв.2025).
+    Ранжирование — по размеру активов (ЦБ РФ, апрель 2026).
+    Портфель ПФ системы: <b style="color:var(--blue)">10.3 трлн руб.</b> (<a href="https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf" target="_blank" style="color:var(--blue)">ЦБ РФ 1кв.2026 ↗</a>)
   </div>
 
   <div class="sec">
@@ -253,7 +259,7 @@ tr:hover td{background:var(--row-hover)}
 
 <footer class="foot">
   <div class="foot-note">Данные: МСФО пресс-релизы банков · ЦБ РФ · Smart-lab · bosfera.ru · AKM</div>
-  <div class="foot-m">iRoRWA = ROE × H20.0 · RWA закрыт ЦБ до окт.2026 · <span>авторский прокси</span> · Доля ПФ: ЦБ РФ эскроу</div>
+  <div class="foot-m">iRoRWA = ROE × H20.0 · RWA закрыт ЦБ до окт.2026 · <span>авторский прокси</span> · <a href="https://cbr.ru/statistics/bank_sector/equity_const_financing/" target="_blank" style="color:var(--green-dark)">Доля ПФ: ЦБ РФ ↗</a> · <a href="https://1000bankov.ru/rating/" target="_blank" style="color:var(--green-dark)">Рейтинг по активам: апрель 2026 ↗</a></div>
 </footer>
 
 <!-- ПФ ТУЛТИП -->
@@ -345,7 +351,12 @@ function renderKPI(){
   document.getElementById('k-h20').textContent   = k.min_h20_val ? k.min_h20_val+'%' : '—';
   document.getElementById('k-h20-sub').textContent  = k.min_h20_bank||'—';
   document.getElementById('k-pf').textContent    = DATA.pf_total_trn ? DATA.pf_total_trn.toFixed(1)+' трлн' : (k.dom_rf_pf_portfolio||'—');
-  document.getElementById('k-pf-sub').textContent   = DATA.pf_source ? 'Источник: '+DATA.pf_source : 'ЦБ РФ · эскроу';
+  const pfSub = document.getElementById('k-pf-sub');
+  if(DATA.pf_source_url){
+    pfSub.innerHTML = DATA.pf_source ? '<a href="'+DATA.pf_source_url+'" target="_blank" style="color:var(--blue)">'+DATA.pf_source+' ↗</a>' : 'ЦБ РФ · эскроу';
+  } else {
+    pfSub.textContent = DATA.pf_source || 'ЦБ РФ · эскроу';
+  }
 }
 
 function cR(v){return !v?'vn':v>=20?'vg':v>=15?'vw':'vr'}
@@ -404,6 +415,21 @@ function renderMatrix(){
       <td style="background:var(--green-bg)">${rr}</td>
       <td class="${cH(b.h20)}">${b.h20?b.h20.toFixed(1)+'%'+(b.he?'<sup class="est">~</sup>':''):'<span class="vn">—</span>'}</td>
       <td style="background:var(--blue-bg)">${pfCell}</td>
+      <td style="background:var(--blue-bg);text-align:right;font-size:12px;font-weight:600;color:var(--blue)">${
+        b.pf_portfolio ? b.pf_portfolio.toLocaleString('ru') : '<span class="vn">—</span>'
+      }${b.pf_est && b.pf_portfolio ? '<sup class="est">~</sup>' : ''}</td>
+      <td style="background:var(--blue-bg);text-align:right;font-size:12px;font-weight:600;color:var(--blue)">${
+        b.pf_escrow ? b.pf_escrow.toLocaleString('ru') : '<span class="vn">—</span>'
+      }${b.pf_est && b.pf_escrow ? '<sup class="est">~</sup>' : ''}</td>
+      <td style="background:var(--blue-bg)">${(() => {
+        if (!b.pf_coverage) return '<span class="vn">—</span>';
+        const cl = b.pf_coverage >= 70 ? 'cv-g' : b.pf_coverage >= 50 ? 'cv-w' : 'cv-r';
+        const w  = Math.min(100, b.pf_coverage);
+        const fc = b.pf_coverage >= 70 ? '#16a34a' : b.pf_coverage >= 50 ? '#d97706' : '#ef4444';
+        return '<div class="pf-cover-wrap"><span class="pf-cover-val '+cl+'">'
+          + b.pf_coverage.toFixed(0)+'%'+(b.pf_est?'<sup class="est">~</sup>':'')
+          +'</span><div class="pf-cover-bar"><div class="pf-cover-fill" style="width:'+w+'%;background:'+fc+'"></div></div></div>';
+      })()}</td>
       <td style="font-size:11px;color:var(--text2)">${b.asset_rank||b.r}</td>
       <td><span class="st-tag ${sc}">${sl}</span></td>
     </tr>`;
