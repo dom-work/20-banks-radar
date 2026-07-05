@@ -208,7 +208,7 @@ tr:hover td{background:var(--row-hover)}
     </table></div>
   </div>
   <div style="font-size:11px;color:var(--text3);padding:4px 8px;margin-top:-12px;margin-bottom:16px">
-    Список: 20 крупнейших банков по портфелю проектного финансирования (ЦБ РФ 2кв.2025).
+    Список: 20 крупнейших банков по портфелю проектного финансирования (ЦБ РФ 1кв.2026).
     Ранжирование — по размеру активов (ЦБ РФ, апрель 2026).
     Портфель ПФ системы: <b style="color:var(--blue)">10.3 трлн руб.</b> (<a href="https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf" target="_blank" style="color:var(--blue)">ЦБ РФ 1кв.2026 ↗</a>)
   </div>
@@ -238,7 +238,7 @@ tr:hover td{background:var(--row-hover)}
   <div class="sec"><div class="sec-title">Источники данных</div></div>
   <div class="sources-section">
     <div class="sources-grid">
-      <a class="source-link" href="https://www.sberbank.ru/ru/investor-relations" target="_blank"><span class="source-dot" style="background:#21A038"></span>Сбербанк IR</a>
+      <a class="source-link" href="https://www.sberbank.com/ru/investor-relations/groupresults" target="_blank"><span class="source-dot" style="background:#21A038"></span>Сбербанк IR</a>
       <a class="source-link" href="https://smart-lab.ru/q/VTBR/f/y/" target="_blank"><span class="source-dot" style="background:#003087"></span>ВТБ · Smart-lab</a>
       <a class="source-link" href="https://bosfera.ru/bo/gazprombank" target="_blank"><span class="source-dot" style="background:#1B4D9A"></span>Газпромбанк · bosfera</a>
       <a class="source-link" href="https://alfabank.ru/alfa-investor/" target="_blank"><span class="source-dot" style="background:#EF3124"></span>Альфа-Банк IR</a>
@@ -289,7 +289,7 @@ tr:hover td{background:var(--row-hover)}
 <script>
 // ── IR ССЫЛКИ (ключ = ранг банка) ─────────────────────────────────────
 const BANK_IR_URLS = {
-  1:  'https://www.sberbank.ru/ru/investor-relations',
+  1:  'https://www.sberbank.com/ru/investor-relations/groupresults',
   2:  'https://smart-lab.ru/q/VTBR/f/y/',
   3:  'https://bosfera.ru/bo/gazprombank',
   4:  'https://alfabank.ru/alfa-investor/',
@@ -359,6 +359,15 @@ function renderKPI(){
     pfSub.innerHTML = DATA.pf_source ? '<a href="'+DATA.pf_source_url+'" target="_blank" style="color:var(--blue)">'+DATA.pf_source+' ↗</a>' : 'ЦБ РФ · эскроу';
   } else {
     pfSub.textContent = DATA.pf_source || 'ЦБ РФ · эскроу';
+  }
+  const coverageVal = DATA.pf_coverage_sys!=null ? DATA.pf_coverage_sys
+    : (DATA.pf_escrow_trn && DATA.pf_total_trn) ? (DATA.pf_escrow_trn/DATA.pf_total_trn*100) : null;
+  document.getElementById('k-coverage').textContent = coverageVal!=null ? coverageVal.toFixed(1)+'%' : '—';
+  const covSub = document.getElementById('k-coverage-sub');
+  if(DATA.pf_escrow_trn!=null && DATA.pf_total_trn!=null){
+    covSub.textContent = DATA.pf_escrow_trn.toFixed(1)+' трлн / '+DATA.pf_total_trn.toFixed(1)+' трлн';
+  } else {
+    covSub.textContent = 'эскроу / портфель ПФ';
   }
 }
 
