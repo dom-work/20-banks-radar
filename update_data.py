@@ -1024,7 +1024,6 @@ def main():
                                 time.sleep(1)
                         if ir_metrics:
                             print(f"    ✓ IR-страница {ir_url[:50]}: {ir_metrics}")
-                            if rank not in sl_updates: sl_updates[rank] = {}
                             if bank_def["n"] not in sl_updates: sl_updates[bank_def["n"]] = {}
                             sl_updates[bank_def["n"]].update(ir_metrics)
                             sl_updates[bank_def["n"]]["src"] = f"IR {TODAY}"

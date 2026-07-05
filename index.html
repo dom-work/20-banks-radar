@@ -515,7 +515,7 @@ tr:hover td { background: var(--row-hover); }
 
 .pf-tooltip {
   display: none;
-  position: fixed;
+  position: absolute;
   z-index: 500;
   background: var(--surface);
   border: 1px solid var(--green-mid);
@@ -526,7 +526,6 @@ tr:hover td { background: var(--row-hover); }
   font-size: 12px;
   color: var(--text2);
   line-height: 1.6;
-  pointer-events: none;
 }
 
 .pf-tooltip.show { display: block; }
@@ -1160,23 +1159,34 @@ document.addEventListener('keydown', e => {
 </div>
 
 <script>
-// ── ТУЛТИП ПФ ────────────────────────────────────────────────────────
+// ── ТУЛТИП ПФ ─────────────────────────────────────────────────────────
 function showPfTip(e) {
   e.stopPropagation();
+  e.preventDefault();
   const tip = document.getElementById('pf-tooltip');
   const rect = e.target.getBoundingClientRect();
-  
-  // Позиционируем рядом с кнопкой
-  tip.style.top  = (rect.bottom + 8) + 'px';
-  tip.style.left = Math.min(rect.left, window.innerWidth - 280) + 'px';
+  const scrollY = window.scrollY || window.pageYOffset;
+  const scrollX = window.scrollX || window.pageXOffset;
+
+  // Позиционируем под значком с учётом скролла
+  let top  = rect.bottom + scrollY + 6;
+  let left = rect.left  + scrollX;
+
+  // Не выходим за правый край экрана
+  const maxLeft = window.innerWidth - 270;
+  if (left > maxLeft) left = maxLeft;
+  if (left < 4) left = 4;
+
+  tip.style.top  = top + 'px';
+  tip.style.left = left + 'px';
   tip.classList.toggle('show');
 }
 
-// Закрываем тултип при клике вне его
+// Закрываем тултип при клике вне
 document.addEventListener('click', function(e) {
-  const tip = document.getElementById('pf-tooltip');
   if (!e.target.classList.contains('pf-badge')) {
-    tip.classList.remove('show');
+    const tip = document.getElementById('pf-tooltip');
+    if (tip) tip.classList.remove('show');
   }
 });
 </script>
