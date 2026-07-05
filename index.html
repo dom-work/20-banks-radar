@@ -377,6 +377,15 @@ tr:hover td { background: var(--row-hover); }
 
 .sig-source a:hover { color: var(--green); }
 
+.sig-period {
+  display: inline-block;
+  font-size: 9px; font-weight: 600;
+  padding: 1px 6px; border-radius: 3px;
+  background: var(--green-bg); color: var(--green-dark);
+  border: 1px solid var(--green-mid);
+  margin-right: 4px; vertical-align: middle;
+}
+
 .sig-foot { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
 .sig-tag {
@@ -497,6 +506,38 @@ tr:hover td { background: var(--row-hover); }
 @keyframes spin { to { transform: rotate(360deg); } }
 .ldg-txt { font-size: 13px; font-weight: 500; color: var(--text); }
 
+
+/* ── ТУЛТИП ПФ ── */
+.pf-badge {
+  position: relative;
+  cursor: pointer;
+}
+
+.pf-tooltip {
+  display: none;
+  position: fixed;
+  z-index: 500;
+  background: var(--surface);
+  border: 1px solid var(--green-mid);
+  border-radius: 10px;
+  padding: 10px 14px;
+  max-width: 260px;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+  pointer-events: none;
+}
+
+.pf-tooltip.show { display: block; }
+
+.pf-tooltip-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-bottom: 4px;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .kpi-row { grid-template-columns: repeat(2,1fr); }
@@ -543,7 +584,7 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
     <div class="logo-divider"></div>
     <div>
       <div class="logo-text">Банковский Радар</div>
-      <div class="logo-sub">ТОП-20 · ПФ-мониторинг · МСФО</div>
+      <div class="logo-sub">ТОП~20 · ПФ-мониторинг · МСФО</div>
     </div>
   </div>
   <div class="hdr-right">
@@ -559,7 +600,7 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
   <div class="kpi-row">
     <div class="kpi green">
       <div class="kpi-accent"></div>
-      <div class="kpi-label">Медиана ROE · ТОП-20</div>
+      <div class="kpi-label">Медиана ROE · ТОП~20</div>
       <div class="kpi-value" id="k-roe">—</div>
       <div class="kpi-sub">данные разных периодов</div>
     </div>
@@ -581,11 +622,11 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
       <div class="kpi-value" id="k-h20">—</div>
       <div class="kpi-sub" id="k-h20-sub">—</div>
     </div>
-    <div class="kpi green">
+    <div class="kpi blue">
       <div class="kpi-accent"></div>
-      <div class="kpi-label">Портфель ПФ · ДОМ.РФ</div>
+      <div class="kpi-label">Портфель ПФ · рынок</div>
       <div class="kpi-value" id="k-pf">—</div>
-      <div class="kpi-sub">+27% г/г · 78 регионов</div>
+      <div class="kpi-sub" id="k-pf-sub">ЦБ РФ · эскроу 99%</div>
     </div>
   </div>
 
@@ -599,6 +640,7 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
       <button class="pill" onclick="fil('pf',this)">ПФ-фокус</button>
       <button class="pill" onclick="fil('listed',this)">Биржевые</button>
       <button class="pill" onclick="srt('rank',this)">По активам</button>
+      <button class="pill" onclick="srt('pf',this)">↓ Доля ПФ</button>
       <button class="pill" onclick="srt('rorwa',this)">↓ iRoRWA</button>
       <button class="pill" onclick="srt('roe',this)">↓ ROE</button>
     </div>
@@ -615,6 +657,8 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
         <th data-metric="cor" onclick="showFormula('cor')">COR<br><span style="font-size:9px;font-weight:400;text-transform:none">↓ лучше</span></th>
         <th data-metric="rorwa" onclick="showFormula('rorwa')" style="background:var(--green-bg)">★ iRoRWA<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--green-dark)">ROE × H20.0</span></th>
         <th data-metric="h20" onclick="showFormula('h20')">H20.0</th>
+        <th style="background:var(--blue-bg);color:var(--blue)" title="Доля банка в портфеле ПФ строительства жилья (эскроу). Источник: ЦБ РФ">Доля ПФ<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">ЦБ РФ</span></th>
+        <th title="Место банка по размеру активов (ЦБ РФ)"># активы</th>
         <th>Статус</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
@@ -731,7 +775,7 @@ th[data-metric]::after{content:' ⓘ';font-size:8px;opacity:.5}
 
 <footer class="foot">
   <div class="foot-note">Данные: МСФО пресс-релизы банков · Банковское обозрение · РБК · Smart-lab · AKM · ЦБ РФ</div>
-  <div class="foot-m">iRoRWA = ROE × H20.0 · RWA закрыт ЦБ до окт.2026 · <span>авторский прокси</span></div>
+  <div class="foot-m">iRoRWA = ROE × H20.0 · RWA закрыт ЦБ до окт.2026 · <span>авторский прокси</span> · Доля ПФ: ЦБ РФ статистика эскроу</div>
 </footer>
 
 <div class="ldg" id="ldg">
@@ -822,7 +866,8 @@ function renderKPI() {
   document.getElementById('k-cir-sub').textContent  = k.best_cir_pf_bank  || '—';
   document.getElementById('k-h20').textContent      = k.min_h20_val       ? k.min_h20_val+'%'       : '—';
   document.getElementById('k-h20-sub').textContent  = k.min_h20_bank      || '—';
-  document.getElementById('k-pf').textContent       = k.dom_rf_pf_portfolio || '—';
+  document.getElementById('k-pf').textContent = DATA.pf_total_trn ? DATA.pf_total_trn.toFixed(1)+' трлн' : (k.dom_rf_pf_portfolio || '—');
+  document.getElementById('k-pf-sub').textContent = DATA.pf_source ? 'Источник: '+DATA.pf_source : 'ЦБ РФ · эскроу 99%';
 }
 
 function cR(v){return !v?'vn':v>=20?'vg':v>=15?'vw':'vr'}
@@ -846,6 +891,7 @@ function renderMatrix(){
   if(sortType==='rorwa') banks.sort((a,b)=>(b.rorwa||0)-(a.rorwa||0));
   if(sortType==='roe')   banks.sort((a,b)=>(b.roe||0)-(a.roe||0));
   if(sortType==='rank')  banks.sort((a,b)=>a.r-b.r);
+  if(sortType==='pf')    banks.sort((a,b)=>(b.pf_share||0)-(a.pf_share||0));
 
   const stMap = {
     data:'st-data данные', part:'st-part частично',
@@ -854,7 +900,7 @@ function renderMatrix(){
 
   document.getElementById('tbody').innerHTML = banks.map((b,i) => {
     const lc2 = b.lc==='#111111' ? '#F9D02A' : '#fff';
-    const pf  = b.pf ? '<span class="pf-badge">ПФ</span>' : '';
+    const pf  = b.pf ? '<span class="pf-badge" onclick="showPfTip(event)">ПФ</span>' : '';
     const cl  = cW(b.rorwa);
     const bc  = cl==='vg'?'#16a34a':cl==='vw'?'#d97706':'#ef4444';
 
@@ -928,9 +974,17 @@ function renderSignals(){
     // Ищем IR-URL банка по имени
     const bankEntry = (DATA.banks||[]).find(b=>b.n===s.bank);
     const irUrl = bankEntry ? BANK_IR_URLS[bankEntry.r] : null;
-    const srcLine = irUrl
-      ? `<div class="sig-source">Источник: <a href="${irUrl}" target="_blank" rel="noopener">${s.bank} IR ↗</a></div>`
+    // Период + конкретный источник
+    const periodHtml = s.period
+      ? `<span class="sig-period">${s.period}</span>`
       : '';
+    const srcLine = (s.src_label && s.src_url)
+      ? `<div class="sig-source">📄 ${periodHtml} <a href="${s.src_url}" target="_blank" rel="noopener">${s.src_label} ↗</a></div>`
+      : (s.src_label
+          ? `<div class="sig-source">📄 ${periodHtml} ${s.src_label}</div>`
+          : (irUrl
+              ? `<div class="sig-source">📄 ${periodHtml} <a href="${irUrl}" target="_blank" rel="noopener">${s.bank} IR ↗</a></div>`
+              : (periodHtml ? `<div class="sig-source">📄 ${periodHtml}</div>` : '')));
 
     return `<div class="signal-card ${pc[s.priority]||'low'}">
       <div class="sig-top">
@@ -970,7 +1024,7 @@ function fil(f,btn){
 function srt(s,btn){
   sortType=s;
   document.querySelectorAll('.pills .pill').forEach(b=>{
-    if(['По активам','↓ iRoRWA','↓ ROE'].includes(b.textContent)) b.classList.remove('on');
+    if(['По активам','↓ Доля ПФ','↓ iRoRWA','↓ ROE'].includes(b.textContent)) b.classList.remove('on');
   });
   btn.classList.add('on');
   renderMatrix();
@@ -1096,6 +1150,35 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeFormula({target: document.getElementById('formula-modal')});
 });
 
+</script>
+
+<!-- ПФ ТУЛТИП -->
+<div class="pf-tooltip" id="pf-tooltip">
+  <div class="pf-tooltip-title">Что означает значок ПФ?</div>
+  Банк активно работает в сегменте проектного финансирования жилья — выдаёт кредиты застройщикам и открывает счета эскроу.<br><br>
+  <b>Важно:</b> все показатели в таблице (ROE, NIM, CIR, COR) — общие по банку согласно МСФО, а не только по ПФ-направлению.
+</div>
+
+<script>
+// ── ТУЛТИП ПФ ────────────────────────────────────────────────────────
+function showPfTip(e) {
+  e.stopPropagation();
+  const tip = document.getElementById('pf-tooltip');
+  const rect = e.target.getBoundingClientRect();
+  
+  // Позиционируем рядом с кнопкой
+  tip.style.top  = (rect.bottom + 8) + 'px';
+  tip.style.left = Math.min(rect.left, window.innerWidth - 280) + 'px';
+  tip.classList.toggle('show');
+}
+
+// Закрываем тултип при клике вне его
+document.addEventListener('click', function(e) {
+  const tip = document.getElementById('pf-tooltip');
+  if (!e.target.classList.contains('pf-badge')) {
+    tip.classList.remove('show');
+  }
+});
 </script>
 </body>
 </html>

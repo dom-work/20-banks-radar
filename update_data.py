@@ -929,36 +929,37 @@ def main():
     print(f"{'='*60}\n")
 
     # Загружаем предыдущий data.json
-    # ВАЖНО: принимаем prev_latest только для банков из текущего BANKS
-    # Это предотвращает подмешивание устаревших данных при изменении списка
-    prev_latest = {}
-    valid_banks = {b["r"]: b["n"] for b in BANKS}  # {rank: name}
+    # КЛЮЧ = ИМЯ БАНКА (не ранг!) — данные привязаны к названию, не позиции
+    prev_latest = {}  # {bank_name: latest_data}
+    valid_names = {b["n"] for b in BANKS}
     if OUTPUT.exists():
         try:
             prev = json.loads(OUTPUT.read_text("utf-8"))
             skipped = 0
             for b in prev.get("banks", []):
-                r = b.get("r")
-                n = b.get("n", "")
-                # Принимаем только если ранг И имя совпадают с текущим BANKS
-                if r in valid_banks and valid_banks[r] == n and b.get("latest"):
-                    prev_latest[r] = b["latest"]
+                name = b.get("n", "")
+                # Принимаем только если имя есть в текущем BANKS
+                if name in valid_names and b.get("latest"):
+                    prev_latest[name] = b["latest"]  # ключ = имя банка
                 else:
                     skipped += 1
             print(f"Предыдущие данные: {prev.get('updated_at','?')} "
-                  f"({len(prev_latest)} валидных, {skipped} устаревших — игнорируем)\n")
+                  f"({len(prev_latest)} валидных по имени, {skipped} устаревших)\n")
         except Exception as e:
             print(f"WARN prev_data: {e}\n")
 
     # ── Smart-lab: парсинг LTM данных для биржевых банков ──────────────
     print("\n── Smart-lab LTM ──")
-    sl_updates = {}
+    sl_updates = {}  # {bank_name: data} — ключ = имя банка
     for rank, ticker in SMARTLAB_TICKERS.items():
-        print(f"  [{ticker}] rank={rank}...")
+        # Находим имя банка по рангу
+        bank_sl = next((b for b in BANKS if b["r"] == rank), None)
+        bank_name_sl = bank_sl["n"] if bank_sl else str(rank)
+        print(f"  [{ticker}] {bank_name_sl}...")
         try:
             data = parse_smartlab(ticker)
             if data:
-                sl_updates[rank] = data
+                sl_updates[bank_name_sl] = data  # ключ = имя банка
                 print(f"    → {data}")
             else:
                 print(f"    → нет данных (возможно блокировка)")
@@ -974,9 +975,9 @@ def main():
         try:
             os_data = parse_open_source_bank(rank)
             if os_data:
-                if rank not in sl_updates:
-                    sl_updates[rank] = {}
-                sl_updates[rank].update(os_data)
+                if bank_name not in sl_updates:
+                    sl_updates[bank_name] = {}
+                sl_updates[bank_name].update(os_data)  # ключ = имя банка
                 print(f"    → обновлено: {os_data}")
             else:
                 print(f"    → данных не найдено")
@@ -1024,8 +1025,9 @@ def main():
                         if ir_metrics:
                             print(f"    ✓ IR-страница {ir_url[:50]}: {ir_metrics}")
                             if rank not in sl_updates: sl_updates[rank] = {}
-                            sl_updates[rank].update(ir_metrics)
-                            sl_updates[rank]["src"] = f"IR {TODAY}"
+                            if bank_def["n"] not in sl_updates: sl_updates[bank_def["n"]] = {}
+                            sl_updates[bank_def["n"]].update(ir_metrics)
+                            sl_updates[bank_def["n"]]["src"] = f"IR {TODAY}"
                         time.sleep(1.5)
                 except Exception as e:
                     print(f"    WARN ir_url {ir_url[:50]}: {e}")
@@ -1034,10 +1036,10 @@ def main():
             latest_from_pdf = process_bank_pdf(bank_def)
 
         # Smart-lab данные как fallback если PDF не дал результатов
-        sl_data = sl_updates.get(rank)
+        sl_data = sl_updates.get(bank_def["n"])  # по имени банка
 
         # Берём предыдущие latest-данные из кэша
-        prev_lat = prev_latest.get(rank)
+        prev_lat = prev_latest.get(bank_def["n"])  # по имени, не по рангу
 
         # Выбираем лучший latest
         latest = None
