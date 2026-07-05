@@ -2,9 +2,9 @@ name: Банковский Радар · Агент обновления PDF
 
 on:
   schedule:
-    - cron: '0 6 * * *'
-    - cron: '0 12 * * *'
-    - cron: '0 18 25-31 * *'
+    - cron: '0 6 * * *'      # 09:00 МСК
+    - cron: '0 12 * * *'     # 15:00 МСК
+    - cron: '0 18 25-31 * *' # 21:00 МСК (конец месяца)
   workflow_dispatch:
 
 jobs:
@@ -14,25 +14,25 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout репозитория
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Установка Python 3.12
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
-      - name: Установка зависимостей
-        run: |
-          pip install pdfplumber --quiet
+      - name: Install dependencies
+        run: pip install pdfplumber requests openpyxl
 
-      - name: Запуск агента обновления
+      - name: Run update agent
+        env:
+          CF_API_TOKEN:  ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
         run: python scripts/update_data.py
 
-      - name: Коммит обновлённых данных
+      - name: Commit if changed
         run: |
-          git config user.name  "Bank Radar Bot"
-          git config user.email "bot@bank-radar.local"
-          git add data.json .pdf_cache.json || true
-          git diff --staged --quiet || git commit -m "данные обновлены $(date +'%d.%m.%Y %H:%M UTC')"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git diff --staged --quiet || git commit -m "data: auto $(date +'%d.%m.%Y %H:%M')"
           git push
