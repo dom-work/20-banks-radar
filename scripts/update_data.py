@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """
 Банковский Радар — агент автоматического обновления.
@@ -42,13 +43,13 @@ BANKS = [
   {"r":2,  "n":"ВТБ",            "lo":"В","lc":"#003087","tp":"state",  "pub":1,"pf":0,
    "e_id":"1000", "ticker":"VTBR",
    "ir_urls":["https://www.vtb.ru/ir/statements/results/","https://smart-lab.ru/q/VTBR/f/y/"],
-   "base":{"roe":18.3,"nim":1.4,"cir":47.3,"cor":1.1,"h20":9.8,"src":"МСФО фев.2026","period":"2025"},
+   "base":{"roe":19.2,"nim":2.5,"cir":38.6,"cor":1.1,"h20":10.7,"src":"МСФО 1кв.2026 (офиц. пресс-релиз)","period":"1кв2026"},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"data"},
 
   {"r":3,  "n":"Газпромбанк",    "lo":"Г","lc":"#1B4D9A","tp":"state",  "pub":0,"pf":0,
    "e_id":"2547", "ticker":None,
    "ir_urls":["https://www.gazprombank.ru/ir/results/","https://bosfera.ru/bo/gazprombank"],
-   "base":{"roe":10.1,"nim":3.0,"cir":48.6,"cor":None,"h20":11.5,"src":"МСФО мар.2026","period":"2025"},
+   "base":{"roe":10.1,"nim":3.0,"cir":48.6,"cor":0.6,"h20":11.5,"src":"МСФО 12мес.2025 (пресс-релиз 30.03.2026)","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":1,"he":1},"st":"part"},
 
   {"r":4,  "n":"Альфа-Банк",     "lo":"А","lc":"#EF3124","tp":"private","pub":0,"pf":0,
@@ -60,13 +61,13 @@ BANKS = [
   {"r":5,  "n":"Россельхозбанк", "lo":"Р","lc":"#2E7D32","tp":"state",  "pub":0,"pf":0,
    "e_id":"2749", "ticker":None,
    "ir_urls":["https://www.rshb.ru/about/reports-conclusion/msfo/","https://bosfera.ru/bo/rosselkhozbank"],
-   "base":{"roe":14.5,"nim":2.7,"cir":50.0,"cor":None,"h20":12.4,"src":"МСФО мар.2026","period":"2025"},
+   "base":{"roe":14.5,"nim":2.7,"cir":50.0,"cor":0.8,"h20":12.4,"src":"МСФО 2025 (пресс-релиз rshb.ru)","period":"2025"},
    "est":{"re":0,"ne":0,"ce":0,"oe":1,"he":1},"st":"part"},
 
   {"r":6,  "n":"МКБ",            "lo":"М","lc":"#7B1FA2","tp":"private","pub":1,"pf":0,
    "e_id":"2096", "ticker":"CBOM",
    "ir_urls":["https://ir.mkb.ru/investor-relations/reports/ifrs","https://smart-lab.ru/q/CBOM/f/y/"],
-   "base":{"roe":8.9,"nim":1.9,"cir":33.8,"cor":15.1,"h20":11.0,"src":"Smart-lab LTM 2026","period":"LTM"},
+   "base":{"roe":8.9,"nim":1.9,"cir":33.8,"cor":15.1,"h20":11.0,"src":"МСФО 1кв.2026 (e-disclosure)","period":"1кв2026"},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":0},"st":"data"},
 
   {"r":7,  "n":"Т-Технологии",   "lo":"Т","lc":"#111111","tp":"private","pub":1,"pf":0,
@@ -82,13 +83,20 @@ BANKS = [
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":1},"st":"data"},
 
   {"r":9,  "n":"Банк ДОМ.РФ",   "lo":"Д","lc":"#1565C0","tp":"state",  "pub":1,"pf":1,
-   "e_id":None, "ticker":None,
+   "e_id":None, "ticker":None, "scope":"bank",
+   # scope='bank': у ДОМ.РФ Банк и Группа ДОМ.РФ (с небанковскими "дочками",
+   # секьюритизацией и т.п.) публикуют РАЗНЫЕ цифры чистой прибыли/CIR/COR.
+   # Проект отслеживает именно Банк — без scope='bank' агент однажды взял
+   # цифры Группы (CIR 21.9%/COR 0.7%) вместо Банка (CIR 16.8%/COR 1.0%).
    "ir_urls":["https://domrfbank.ru/about/information/msfo/","https://domrfbank.ru/about/press/"],
-   "base":{"roe":21.6,"nim":3.7,"cir":28.3,"cor":0.7,"h20":13.5,"src":"МСФО фев.2026","period":"2025"},
+   "base":{"roe":23.8,"nim":4.4,"cir":16.8,"cor":1.0,"h20":13.5,"src":"МСФО Банк ДОМ.РФ 1кв.2026 (не группа)","period":"1кв2026"},
    "est":{"re":0,"ne":0,"ce":0,"oe":0,"he":1},"st":"data"},
 
   {"r":10, "n":"Промсвязьбанк",            "lo":"П","lc":"#AD1457","tp":"state",  "pub":0,"pf":0,
-   "e_id":None, "ticker":None,
+   "e_id":None, "ticker":None, "disclosure_restricted":True,
+   # disclosure_restricted=True: санкционный банк, часть отчётности (в т.ч.
+   # COR, H20) закрыта по решению ЦБ РФ — это не "агент не нашёл", а
+   # официально недоступно нигде в открытых источниках. Не пытаться искать.
    "ir_urls":["https://www.psbank.ru/Bank/Investors/IFRS","https://www.psbank.ru/bank/investors/ras"],
    "base":{"roe":30.8,"nim":3.45,"cir":45.1,"cor":None,"h20":None,"src":"МСФО 1кв.2026 (устойч.)","period":"1кв2026"},
    "est":{"re":1,"ne":1,"ce":1,"oe":1,"he":0},"st":"part"},
@@ -118,21 +126,35 @@ BANKS = [
    "est":{"re":0,"ne":0,"ce":0,"oe":1,"he":1},"st":"data"},
 
   {"r":15, "n":"Новикомбанк",    "lo":"Н","lc":"#0D47A1","tp":"state",  "pub":0,"pf":0,
-   "e_id":"9789", "ticker":None,
+   "e_id":"9789", "ticker":None, "needs_manual_calc":True,
    "ir_urls":["https://novikombank.ru/about/disclosure/financial-reports/","https://ratings.ru/ratings/press-releases/?search=новикомбанк"],
-   "base":{"roe":25.0,"nim":None,"cir":None,"cor":None,"h20":15.2,"src":"НКР 9м.2025","period":"9м2025"},
+   "base":{"roe":21.1,"nim":None,"cir":None,"cor":None,"h20":15.2,"src":"Эксперт РА · МСФО 2025 (рейтинг 04.2026)","period":"2025"},
    "est":{"re":1,"ne":0,"ce":0,"oe":1,"he":0},"st":"part"},
 
   {"r":16, "n":"Уралсиб",        "lo":"У","lc":"#00695C","tp":"private","pub":0,"pf":0,
-   "e_id":None, "ticker":None,
+   "e_id":None, "ticker":None, "rsbu_only":True,
+   # rsbu_only=True: банк раскрывает только РСБУ, а NIM/CIR/COR/H20 в этом
+   # проекте считаются по МСФО-методологии — их некорректно выводить из РСБУ
+   # напрямую (иная база активов/капитала). Это НЕ то же самое, что
+   # needs_manual_calc — здесь расчёт в принципе даст несопоставимые цифры.
    "ir_urls":["https://uralsib.ru/about/investors/","https://bosfera.ru/bo/bank-uralsib"],
    "base":{"roe":10.1,"nim":None,"cir":None,"cor":None,"h20":None,"src":"РСБУ апр.2026","period":"2025"},
    "est":{"re":1,"ne":0,"ce":0,"oe":0,"he":0},"st":"part"},
 
   {"r":17, "n":"Ак Барс",        "lo":"А","lc":"#558B2F","tp":"private","pub":0,"pf":0,
-   "e_id":"2975", "ticker":None,
-   "ir_urls":["https://www.akbars.ru/about/free-info/reports/","https://cbonds.ru/company/AKBARS/"],
-   "base":{"roe":14.3,"nim":None,"cir":None,"cor":None,"h20":13.9,"src":"МСФО мар.2026","period":"2025"},
+   "e_id":"2975", "ticker":None, "needs_manual_calc":True,
+   # ir_urls: akbars.ru стоит вторым — сайт блокирует ботов (robots.txt),
+   # is_robots_blocked() всё равно его пропустит, но cbonds первым экономит время.
+   # needs_manual_calc=True: банк не публикует IR-презентацию с готовыми
+   # NIM/CIR/COR (в отличие от Сбер/ВТБ/ДОМ.РФ) — только сырую отчётность
+   # (баланс + ОПУ) через e-disclosure. Текущий extract_metrics() ищет ГОТОВЫЕ
+   # проценты в тексте ("NIM: 7.2%") и здесь бесполезен — нужен отдельный расчёт
+   # NIM = чистый % доход / средние % активы, CIR = операц. расходы / доходы,
+   # COR = резервы / кредитный портфель — из строк исходного отчёта.
+   # Это НЕ реализовано; banks_needing_manual_calc в конце прогона (см. main())
+   # печатает такие банки явно, чтобы это не терялось молча.
+   "ir_urls":["https://cbonds.ru/company/AKBARS/","https://www.akbars.ru/about/free-info/reports/"],
+   "base":{"roe":14.3,"nim":None,"cir":None,"cor":None,"h20":13.9,"src":"МСФО 2025 (cbonds, e-disclosure #2975)","period":"2025"},
    "est":{"re":1,"ne":0,"ce":0,"oe":1,"he":0},"st":"part"},
 
   {"r":18, "n":"БМ-Банк",        "lo":"О","lc":"#4527A0","tp":"state",  "pub":0,"pf":0,
@@ -286,11 +308,34 @@ def fetch_binary(url, timeout=40):
 def md5(data):
     return hashlib.md5(data).hexdigest()
 
-def exnum(text, pats):
+def _scope_ok(text, start, scope):
+    """
+    Проверяет, относится ли найденное число к нужному периметру консолидации.
+    scope='bank'  → рядом с числом не должно преобладать слово "Групп(а/ы)"
+                    без слова "Банк" — иначе это скорее всего цифра ГРУППЫ,
+                    а не самого банка (пример: Банк ДОМ.РФ vs Группа ДОМ.РФ,
+                    где Группа включает небанковские "дочки" — секьюритизация
+                    и т.п. — и даёт другие CIR/COR/чистую прибыль).
+    scope='group' → допускаем оба варианта (группа обычно шире банка).
+    scope=None    → проверка не применяется (старое поведение).
+    Ищем в окне ±150 символов вокруг найденного числа.
+    """
+    if not scope:
+        return True
+    window = text[max(0, start-150):start+150]
+    has_group = bool(re.search(r'[Гг]рупп\w+', window))
+    has_bank  = bool(re.search(r'[Бб]анк\w*\s+ДОМ|[Бб]анк(?!\s+России)\w*\b', window))
+    if scope == 'bank' and has_group and not has_bank:
+        return False
+    return True
+
+def exnum(text, pats, scope=None):
     for p in pats:
         for m in re.finditer(p, text, re.I | re.M):
+            if not _scope_ok(text, m.start(), scope):
+                continue
             try:
-                v = float(m.group(1).replace(",","."))
+                v = float(m.group(1).replace(",", "."))
                 return v
             except: pass
     return None
@@ -299,10 +344,16 @@ def validate(metric, val):
     lo, hi = RANGES.get(metric, (0,1000))
     return lo <= val <= hi
 
-def extract_metrics(text):
+def extract_metrics(text, scope=None):
+    """
+    scope: 'bank' — извлекать только показатели банка (не группы/холдинга).
+           Передавайте scope='bank' для банков, у которых материнская
+           компания/группа отчитывается отдельно и шире (ДОМ.РФ, Т-Технологии,
+           МТС Банк и т.п.) — иначе метрики банка и группы могут перепутаться.
+    """
     found = {}
     for m, pats in PATTERNS.items():
-        v = exnum(text, pats)
+        v = exnum(text, pats, scope=scope)
         if v is not None and validate(m, v):
             found[m] = round(v, 2)
     return found
@@ -393,7 +444,7 @@ def process_bank_pdf(bank):
             save_cache(cache)
             continue
 
-        metrics = extract_metrics(text)
+        metrics = extract_metrics(text, scope=bank.get("scope"))
         period_label, period_date = detect_period(text)
 
         result = {
@@ -503,6 +554,16 @@ OPEN_SOURCES = {
     },
 }
 
+# Домены, у которых robots.txt запрещает автоматический доступ —
+# подтверждено вручную 06.07.2026 (akbars.ru отдаёт ROBOTS_DISALLOWED).
+# Для банков на таких доменах прямой fetch() бесполезен — сразу используем
+# только альтернативные источники (cbonds, e-disclosure, новости).
+ROBOTS_BLOCKED_DOMAINS = {"akbars.ru", "www.akbars.ru"}
+
+def is_robots_blocked(url: str) -> bool:
+    host = re.sub(r'^https?://', '', url).split('/')[0]
+    return host in ROBOTS_BLOCKED_DOMAINS
+
 def parse_open_source_bank(rank: int) -> dict:
     """
     Парсит данные банков без биржевого листинга из открытых источников:
@@ -516,6 +577,9 @@ def parse_open_source_bank(rank: int) -> dict:
     result = {}
 
     for url in src_cfg["urls"]:
+        if is_robots_blocked(url):
+            print(f"    → {url[:60]} заблокирован robots.txt, пропускаем")
+            continue
         print(f"    → {url[:60]}...")
         html = fetch(url)
         if not html:
@@ -555,7 +619,7 @@ def parse_open_source_bank(rank: int) -> dict:
                 print(f"    → PDF: {link[-60:]}...")
                 pdf_bytes = fetch_binary(link)
                 if pdf_bytes and len(pdf_bytes) > 5000:
-                    pdf_text = extract_pdf_text(pdf_bytes)
+                    pdf_text = pdf_to_text(pdf_bytes)
                     if pdf_text:
                         pdf_metrics = extract_metrics(pdf_text)
                         if pdf_metrics:
@@ -868,17 +932,23 @@ def fetch_text_via_proxy(url: str) -> str:
     return data.decode('utf-8', errors='replace') if data else ''
 
 
+CBR_PF_PAGE = "https://www.cbr.ru/statistics/bank_sector/equity_const_financing/"
+
 def fetch_cbr_pf_live() -> dict:
     """
-    Скачивает актуальные данные по ПФ с сайта ЦБ РФ через прокси.
+    Скачивает актуальные данные по ПФ с сайта ЦБ РФ через Cloudflare Worker прокси.
     Возвращает {bank_name: {pf_share, pf_trn, asset_rank}} или {}.
+    ВАЖНО: раньше здесь были ссылки на неопределённые CF_PROXY_URL/CBR_PF_PAGE,
+    из-за чего функция гарантированно падала с NameError при каждом вызове
+    и обрывала весь скрипт на этапе update_pf_data(). Исправлено 06.07.2026.
     """
-    if not CF_PROXY_URL:
-        print("    → CBR_PROXY_URL не задан, используем статику")
+    worker_url = get_worker_url()
+    if not worker_url:
+        print("    → Cloudflare Worker недоступен (нет CF_API_TOKEN/CF_ACCOUNT_ID), используем статику")
         return {}
 
-    print(f"    → Запрос к ЦБ РФ через прокси...")
-    
+    print(f"    → Запрос к ЦБ РФ через Worker {worker_url}...")
+
     # Шаг 1: получаем страницу со списком файлов
     html = fetch_text_via_proxy(CBR_PF_PAGE)
     if not html or len(html) < 1000:
@@ -1040,9 +1110,16 @@ def update_pf_data(banks: list) -> list:
     2. Fallback — статичные данные CBR_PF_SHARES из последнего отчёта
     """
     print("\n── Данные ПФ (ЦБ РФ) ──")
-    
-    # Пробуем получить свежие данные через прокси
-    live_data = fetch_cbr_pf_live()
+
+    # Пробуем получить свежие данные через прокси.
+    # Обязательно в try/except: это сетевой путь с внешней зависимостью
+    # (формат страницы ЦБ РФ может измениться), падение здесь не должно
+    # обрывать весь агент — фолбэк на статику CBR_PF_SHARES ниже.
+    try:
+        live_data = fetch_cbr_pf_live()
+    except Exception as e:
+        print(f"    WARN fetch_cbr_pf_live упал: {e} — используем статику")
+        live_data = {}
     
     for b in banks:
         name = b.get("n", "")
@@ -1090,7 +1167,23 @@ def main():
 
     # ── Smart-lab: парсинг LTM данных для биржевых банков ──────────────
     print("\n── Smart-lab LTM ──")
-    sl_updates = {}  # {bank_name: data} — ключ = имя банка
+    # sl_snapshots: {bank_name: [ {"src":..., "metrics": {...}}, ... ]}
+    # ВАЖНО: раньше здесь был плоский sl_updates[name].update(...), из-за
+    # чего метрики с разных источников/периодов (Smart-lab LTM + IR-страница
+    # квартала + новость за другой период) сливались ПОЛЕ-ЗА-ПОЛЕМ в одну
+    # запись — получался "Франкенштейн" из разных отчётных периодов внутри
+    # одной строки банка (ровно так же, как с ДОМ.РФ Банк/Группа).
+    # Теперь каждый источник — отдельный снапшот; при выборе "latest" берём
+    # ОДИН самый полный снапшот целиком, а не смешиваем поля между ними.
+    sl_snapshots = {}  # {bank_name: [snapshot, ...]}
+
+    def add_snapshot(bank_name, src_label, metrics):
+        if not metrics:
+            return
+        sl_snapshots.setdefault(bank_name, []).append(
+            {"src": src_label, "metrics": dict(metrics)}
+        )
+
     for rank, ticker in SMARTLAB_TICKERS.items():
         # Находим имя банка по рангу
         bank_sl = next((b for b in BANKS if b["r"] == rank), None)
@@ -1099,7 +1192,7 @@ def main():
         try:
             data = parse_smartlab(ticker)
             if data:
-                sl_updates[bank_name_sl] = data  # ключ = имя банка
+                add_snapshot(bank_name_sl, f"Smart-lab LTM {TODAY}", data)
                 print(f"    → {data}")
             else:
                 print(f"    → нет данных (возможно блокировка)")
@@ -1115,9 +1208,7 @@ def main():
         try:
             os_data = parse_open_source_bank(rank)
             if os_data:
-                if bank_name not in sl_updates:
-                    sl_updates[bank_name] = {}
-                sl_updates[bank_name].update(os_data)  # ключ = имя банка
+                add_snapshot(bank_name, f"открытые источники {TODAY}", os_data)
                 print(f"    → обновлено: {os_data}")
             else:
                 print(f"    → данных не найдено")
@@ -1138,12 +1229,15 @@ def main():
             # Сначала пробуем официальные IR-страницы банка
             ir_urls = bank_def.get("ir_urls", [])
             for ir_url in ir_urls[:2]:
+                if is_robots_blocked(ir_url):
+                    print(f"    → {ir_url[:60]} заблокирован robots.txt, пропускаем")
+                    continue
                 try:
                     html = fetch(ir_url)
                     if html:
                         text = re.sub(r'<[^>]+>', ' ', html)
                         text = re.sub(r'\s+', ' ', text)
-                        ir_metrics = extract_metrics(text)
+                        ir_metrics = extract_metrics(text, scope=bank_def.get("scope"))
                         # Ищем PDF ссылки
                         base_domain = re.match(r'https?://[^/]+', ir_url)
                         base = base_domain.group(0) if base_domain else ""
@@ -1156,17 +1250,15 @@ def main():
                             if ".pdf" in link.lower():
                                 pdf_bytes = fetch_binary(link)
                                 if pdf_bytes and len(pdf_bytes) > 5000:
-                                    pdf_text = extract_pdf_text(pdf_bytes)
+                                    pdf_text = pdf_to_text(pdf_bytes)
                                     if pdf_text:
-                                        pdf_m = extract_metrics(pdf_text)
+                                        pdf_m = extract_metrics(pdf_text, scope=bank_def.get("scope"))
                                         if pdf_m:
                                             ir_metrics.update(pdf_m)
                                 time.sleep(1)
                         if ir_metrics:
                             print(f"    ✓ IR-страница {ir_url[:50]}: {ir_metrics}")
-                            if bank_def["n"] not in sl_updates: sl_updates[bank_def["n"]] = {}
-                            sl_updates[bank_def["n"]].update(ir_metrics)
-                            sl_updates[bank_def["n"]]["src"] = f"IR {TODAY}"
+                            add_snapshot(bank_def["n"], f"IR {TODAY}", ir_metrics)
                         time.sleep(1.5)
                 except Exception as e:
                     print(f"    WARN ir_url {ir_url[:50]}: {e}")
@@ -1175,7 +1267,17 @@ def main():
             latest_from_pdf = process_bank_pdf(bank_def)
 
         # Smart-lab данные как fallback если PDF не дал результатов
-        sl_data = sl_updates.get(bank_def["n"])  # по имени банка
+        # Выбираем ОДИН лучший снапшот (не смешиваем поля разных источников/
+        # периодов между собой — см. комментарий у sl_snapshots выше).
+        # "Лучший" = у кого больше заполненных метрик; при равенстве —
+        # последний найденный (обычно самый специфичный: IR > открытые > Smart-lab,
+        # т.к. добавляются в этом порядке и list.append сохраняет порядок).
+        candidates = sl_snapshots.get(bank_def["n"], [])
+        sl_data = None
+        if candidates:
+            best_snap = max(candidates, key=lambda s: len(s["metrics"]))
+            sl_data = dict(best_snap["metrics"])
+            sl_data["src"] = best_snap["src"]
 
         # Берём предыдущие latest-данные из кэша
         prev_lat = prev_latest.get(bank_def["n"])  # по имени, не по рангу
@@ -1190,9 +1292,10 @@ def main():
                 **{k: v for k,v in latest_from_pdf["metrics"].items()},
             }
         elif sl_data:
-            # Используем Smart-lab LTM данные
+            # sl_data уже содержит "src" от выбранного снапшота (IR/открытые
+            # источники/Smart-lab) — **sl_data ниже переопределяет дефолт.
             latest = {
-                "src": f"Smart-lab LTM {TODAY}",
+                "src": f"Smart-lab LTM {TODAY}",  # дефолт, если в sl_data нет src
                 **sl_data,
             }
         elif prev_lat:
@@ -1307,6 +1410,34 @@ def main():
     print(f"✓ data.json обновлён")
     print(f"  Банков с ROE: {banks_with_data}/20")
     print(f"  Банков с квартальными данными: {banks_with_latest}/20")
+
+    # ── Диагностика структурных пробелов ──────────────────────────
+    # Печатаем ЯВНО, а не оставляем null молча — иначе такие пробелы
+    # выглядят как "агент не справился", хотя причина известна и постоянна.
+    manual_calc  = [b["n"] for b in BANKS if b.get("needs_manual_calc")]
+    rsbu_only    = [b["n"] for b in BANKS if b.get("rsbu_only")]
+    restricted   = [b["n"] for b in BANKS if b.get("disclosure_restricted")]
+    if manual_calc:
+        print(f"  ⚠ Требуют ручного расчёта NIM/CIR/COR из сырой отчётности "
+              f"(нет готовой IR-презентации): {', '.join(manual_calc)}")
+    if rsbu_only:
+        print(f"  ⚠ Только РСБУ, МСФО-метрики несопоставимы: {', '.join(rsbu_only)}")
+    if restricted:
+        print(f"  ⚠ Отчётность частично закрыта (санкции/решение ЦБ): {', '.join(restricted)}")
+
+    # Любой банк без явного флага (manual_calc/rsbu_only/restricted/exit/nd),
+    # у которого всё ещё нет NIM/CIR/COR — это НЕОБЪЯСНЁННЫЙ пробел,
+    # то есть либо баг в парсинге, либо забыли проставить флаг выше.
+    flagged_names = set(manual_calc) | set(rsbu_only) | set(restricted)
+    unexplained = [
+        b["n"] for b in final_banks
+        if b["st"] not in ("exit", "nd")
+        and b["n"] not in flagged_names
+        and any(b.get(m) is None for m in ("nim", "cir", "cor"))
+    ]
+    if unexplained:
+        print(f"  ✗ НЕОБЪЯСНЁННЫЕ пробелы NIM/CIR/COR (проверить парсинг!): "
+              f"{', '.join(unexplained)}")
     print(f"{'='*60}")
 
 if __name__ == "__main__":
