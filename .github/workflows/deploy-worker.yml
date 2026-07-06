@@ -1,0 +1,28 @@
+name: Deploy CBR Proxy Worker
+
+on:
+  push:
+    paths:
+      # ИСПРАВЛЕНО 06.07.2026: index.js и wrangler.toml лежат в КОРНЕ
+      # репозитория, а не в подпапке cbr-worker/, которой никогда не
+      # существовало. Со старым путём 'cbr-worker/**' этот триггер
+      # никогда не срабатывал — Worker физически не мог задеплоиться
+      # автоматически, независимо от секретов CF_API_TOKEN/CF_ACCOUNT_ID.
+      - 'index.js'
+      - 'wrangler.toml'
+  workflow_dispatch:     # или вручную
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Workers
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          # workingDirectory убран — wrangler.toml лежит в корне,
+          # так что рабочая директория по умолчанию (корень репо) верна.
