@@ -1,6 +1,6 @@
 {
-  "updated_at": "06.07.2026 02:05 МСК",
-  "updated": "06.07.2026 02:05 МСК",
+  "updated_at": "12.07.2026 21:40 МСК",
+  "updated": "12.07.2026 21:40 МСК",
   "pf_total_trn": 10.3,
   "pf_source": "ЦБ РФ 1кв.2026 (01.04.2026)",
   "kpi": {
@@ -39,8 +39,8 @@
       "pf_trn": 3.48,
       "asset_rank": 1,
       "pf_portfolio": 4120,
-      "pf_escrow": 3090,
-      "pf_coverage": 75.0,
+      "pf_escrow": 2950,
+      "pf_coverage": 71.6,
       "pf_est": true
     },
     {
@@ -53,7 +53,7 @@
       "pf": 1,
       "roe": 19.2,
       "nim": 2.5,
-      "cir": 38.6,
+      "cir": null,
       "cor": 1.1,
       "h20": 10.7,
       "rorwa": 2.05,
@@ -68,7 +68,7 @@
       "pf_trn": 1.22,
       "asset_rank": 2,
       "pf_portfolio": 1442,
-      "pf_escrow": 938,
+      "pf_escrow": 937,
       "pf_coverage": 65.0,
       "pf_est": true
     },
@@ -83,7 +83,7 @@
       "roe": 10.1,
       "nim": 3.0,
       "cir": 48.6,
-      "cor": 0.6,
+      "cor": null,
       "h20": 11.5,
       "rorwa": 1.16,
       "re": 0,
@@ -97,8 +97,8 @@
       "pf_trn": 0.52,
       "asset_rank": 3,
       "pf_portfolio": 618,
-      "pf_escrow": 400,
-      "pf_coverage": 64.7,
+      "pf_escrow": 407,
+      "pf_coverage": 65.9,
       "pf_est": true
     },
     {
@@ -126,8 +126,8 @@
       "pf_trn": 0.35,
       "asset_rank": 4,
       "pf_portfolio": 412,
-      "pf_escrow": 268,
-      "pf_coverage": 65.0,
+      "pf_escrow": 272,
+      "pf_coverage": 66.0,
       "pf_est": true
     },
     {
@@ -155,8 +155,8 @@
       "pf_trn": 0.18,
       "asset_rank": 5,
       "pf_portfolio": 206,
-      "pf_escrow": 134,
-      "pf_coverage": 65.0,
+      "pf_escrow": 136,
+      "pf_coverage": 66.0,
       "pf_est": true
     },
     {
@@ -179,13 +179,13 @@
       "oe": 0,
       "he": 0,
       "st": "data",
-      "src": "МСФО 1кв.2026 (e-disclosure)",
+      "src": "Smart-lab LTM 2026",
       "pf_share": 1.0,
       "pf_trn": 0.09,
       "asset_rank": 6,
       "pf_portfolio": 103,
-      "pf_escrow": 67,
-      "pf_coverage": 65.0,
+      "pf_escrow": 68,
+      "pf_coverage": 66.0,
       "pf_est": true
     },
     {
@@ -198,8 +198,8 @@
       "pf": 1,
       "roe": 23.8,
       "nim": 4.4,
-      "cir": 16.8,
-      "cor": 1.0,
+      "cir": null,
+      "cor": null,
       "h20": 13.5,
       "rorwa": 3.21,
       "re": 0,
@@ -208,13 +208,13 @@
       "oe": 1,
       "he": 1,
       "st": "data",
-      "src": "МСФО Банк ДОМ.РФ 1кв.2026 (не группа)",
+      "src": "МСФО апр.2026",
       "pf_share": 17.0,
       "pf_trn": 1.48,
       "asset_rank": 7,
       "pf_portfolio": 1752,
-      "pf_escrow": 1440,
-      "pf_coverage": 82.2,
+      "pf_escrow": 1225,
+      "pf_coverage": 69.9,
       "pf_est": true
     },
     {
@@ -271,8 +271,8 @@
       "pf_trn": 0.09,
       "asset_rank": 9,
       "pf_portfolio": 103,
-      "pf_escrow": 67,
-      "pf_coverage": 65.0,
+      "pf_escrow": 70,
+      "pf_coverage": 68.0,
       "pf_est": true
     },
     {
@@ -300,8 +300,8 @@
       "pf_trn": 0.04,
       "asset_rank": 10,
       "pf_portfolio": 52,
-      "pf_escrow": 34,
-      "pf_coverage": 65.4,
+      "pf_escrow": 35,
+      "pf_coverage": 67.3,
       "pf_est": true
     },
     {
@@ -341,19 +341,19 @@
       "tp": "state",
       "pub": 0,
       "pf": 0,
-      "roe": 21.1,
+      "roe": 25.0,
       "nim": null,
       "cir": null,
       "cor": null,
       "h20": 15.2,
-      "rorwa": 3.21,
+      "rorwa": 3.8,
       "re": 1,
       "ne": 0,
       "ce": 0,
       "oe": 1,
       "he": 0,
       "st": "part",
-      "src": "Эксперт РА · МСФО 2025 (рейтинг 04.2026), РСБУ 1кв.2026: прибыль +45% г/г",
+      "src": "НКР 9м.2025",
       "pf_share": 0.2,
       "pf_trn": 0.02,
       "asset_rank": 12,
@@ -387,8 +387,8 @@
       "pf_trn": 0.03,
       "asset_rank": 14,
       "pf_portfolio": 31,
-      "pf_escrow": 20,
-      "pf_coverage": 64.5,
+      "pf_escrow": 21,
+      "pf_coverage": 67.7,
       "pf_est": true
     },
     {
@@ -445,8 +445,8 @@
       "pf_trn": 0.04,
       "asset_rank": 17,
       "pf_portfolio": 52,
-      "pf_escrow": 34,
-      "pf_coverage": 65.4,
+      "pf_escrow": 35,
+      "pf_coverage": 67.3,
       "pf_est": true
     },
     {
@@ -503,8 +503,8 @@
       "pf_trn": 0.28,
       "asset_rank": 20,
       "pf_portfolio": 309,
-      "pf_escrow": 200,
-      "pf_coverage": 64.7,
+      "pf_escrow": 210,
+      "pf_coverage": 68.0,
       "pf_est": true
     },
     {
@@ -698,6 +698,6 @@
   "pf_source_url": "https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf",
   "concept": "ТОП-20 банков по портфелю ПФ, ранжированных по активам",
   "pf_cbr_page": "https://cbr.ru/statistics/bank_sector/equity_const_financing/",
-  "pf_escrow_trn": 7.3,
-  "pf_coverage_sys": 71.0
+  "pf_escrow_trn": 7.4,
+  "pf_coverage_sys": 68.0
 }

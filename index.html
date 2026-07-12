@@ -200,7 +200,7 @@ tr:hover td{background:var(--row-hover)}
         <th style="background:var(--blue-bg);color:var(--blue);cursor:pointer" onclick="window.open('https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf','_blank')" title="Открыть отчёт ЦБ РФ о проектном финансировании 1кв.2026">Доля ПФ ↗<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">ЦБ РФ 1кв.2026</span></th>
         <th style="background:var(--blue-bg);color:var(--blue)" title="Кредитный портфель проектного финансирования банка, млрд руб. Оценка на основе доли рынка ЦБ РФ 1кв.2026">КП ПФ<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">млрд руб.~</span></th>
         <th style="background:var(--blue-bg);color:var(--blue)" title="Остатки средств на счетах эскроу, млрд руб. Оценка на основе доли рынка ЦБ РФ 1кв.2026">Эскроу<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">млрд руб.~</span></th>
-        <th style="background:var(--blue-bg);color:var(--blue)" title="Коэффициент покрытия кредитов ПФ остатками на счетах эскроу = Эскроу / КП ПФ × 100%. Норма ≥ 70% (ЦБ РФ)">Эскроу/ПФ<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">коэф.~</span></th>
+        <th style="background:var(--blue-bg);color:var(--blue)" title="Коэффициент покрытия кредитов ПФ остатками на счетах эскроу = Эскроу / КП ПФ × 100%. Норма ≥ 68% (ЦБ РФ 1кв.2026). Внимание: часть средств на эскроу относится к договорам с рассрочкой — данные по долям в разбивке по банкам не раскрываются ЦБ РФ">Эскроу/ПФ<br><span style="font-size:9px;font-weight:400;text-transform:none;color:var(--blue)">коэф.~</span></th>
         <th style="cursor:pointer" onclick="window.open('https://1000bankov.ru/rating/','_blank')" title="Место банка по активам (1000bankov.ru / ЦБ РФ форма 101, апрель 2026)"># акт. ↗</th>
         <th>Статус</th>
       </tr></thead>
@@ -208,9 +208,15 @@ tr:hover td{background:var(--row-hover)}
     </table></div>
   </div>
   <div style="font-size:11px;color:var(--text3);padding:4px 8px;margin-top:-12px;margin-bottom:16px">
-    Список: 20 крупнейших банков по портфелю проектного финансирования (ЦБ РФ 1кв.2026).
+    Список: 20 крупнейших банков по портфелю проектного финансирования (ЦБ РФ 2кв.2025).
     Ранжирование — по размеру активов (ЦБ РФ, апрель 2026).
-    Портфель ПФ системы: <b style="color:var(--blue)">10.3 трлн руб.</b> (<a href="https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf" target="_blank" style="color:var(--blue)">ЦБ РФ 1кв.2026 ↗</a>)
+    Портфель ПФ системы: <b style="color:var(--blue)">10.3 трлн руб.</b>,
+    эскроу: <b style="color:var(--blue)">7.4 трлн руб.</b>,
+    покрытие по системе: <b style="color:var(--blue)">68%</b>
+    (<a href="https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf" target="_blank" style="color:var(--blue)">ЦБ РФ 1кв.2026 ↗</a>).
+    <span style="color:var(--yellow)">⚠ Показатель «Эскроу/ПФ» по отдельным банкам — оценочный (~).
+    Часть средств на счетах эскроу относится к договорам с рассрочкой платежа,
+    по которым ЦБ РФ не раскрывает разбивку в разрезе банков.</span>
   </div>
 
   <div class="sec">
@@ -360,15 +366,6 @@ function renderKPI(){
   } else {
     pfSub.textContent = DATA.pf_source || 'ЦБ РФ · эскроу';
   }
-  const coverageVal = DATA.pf_coverage_sys!=null ? DATA.pf_coverage_sys
-    : (DATA.pf_escrow_trn && DATA.pf_total_trn) ? (DATA.pf_escrow_trn/DATA.pf_total_trn*100) : null;
-  document.getElementById('k-coverage').textContent = coverageVal!=null ? coverageVal.toFixed(1)+'%' : '—';
-  const covSub = document.getElementById('k-coverage-sub');
-  if(DATA.pf_escrow_trn!=null && DATA.pf_total_trn!=null){
-    covSub.textContent = DATA.pf_escrow_trn.toFixed(1)+' трлн / '+DATA.pf_total_trn.toFixed(1)+' трлн';
-  } else {
-    covSub.textContent = 'эскроу / портфель ПФ';
-  }
 }
 
 function cR(v){return !v?'vn':v>=20?'vg':v>=15?'vw':'vr'}
@@ -435,9 +432,9 @@ function renderMatrix(){
       }${b.pf_est && b.pf_escrow ? '<sup class="est">~</sup>' : ''}</td>
       <td style="background:var(--blue-bg)">${(() => {
         if (!b.pf_coverage) return '<span class="vn">—</span>';
-        const cl = b.pf_coverage >= 70 ? 'cv-g' : b.pf_coverage >= 50 ? 'cv-w' : 'cv-r';
+        const cl = b.pf_coverage >= 68 ? 'cv-g' : b.pf_coverage >= 50 ? 'cv-w' : 'cv-r';
         const w  = Math.min(100, b.pf_coverage);
-        const fc = b.pf_coverage >= 70 ? '#16a34a' : b.pf_coverage >= 50 ? '#d97706' : '#ef4444';
+        const fc = b.pf_coverage >= 68 ? '#16a34a' : b.pf_coverage >= 50 ? '#d97706' : '#ef4444';
         return '<div class="pf-cover-wrap"><span class="pf-cover-val '+cl+'">'
           + b.pf_coverage.toFixed(0)+'%'+(b.pf_est?'<sup class="est">~</sup>':'')
           +'</span><div class="pf-cover-bar"><div class="pf-cover-fill" style="width:'+w+'%;background:'+fc+'"></div></div></div>';
