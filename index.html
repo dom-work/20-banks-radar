@@ -366,6 +366,14 @@ function renderKPI(){
   } else {
     pfSub.textContent = DATA.pf_source || 'ЦБ РФ · эскроу';
   }
+  // Покрытие эскроу по системе
+  if(DATA.pf_coverage_sys){
+    const covEl = document.getElementById('k-coverage');
+    const covSub = document.getElementById('k-coverage-sub');
+    covEl.textContent = DATA.pf_coverage_sys.toFixed(0) + '%';
+    covEl.style.color = DATA.pf_coverage_sys >= 68 ? '#16a34a' : DATA.pf_coverage_sys >= 50 ? '#d97706' : '#ef4444';
+    covSub.textContent = 'Эскроу ' + (DATA.pf_escrow_trn||'?') + ' трлн / ПФ ' + (DATA.pf_total_trn||'?') + ' трлн';
+  }
 }
 
 function cR(v){return !v?'vn':v>=20?'vg':v>=15?'vw':'vr'}
