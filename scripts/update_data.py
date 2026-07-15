@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Банковский Радар — агент автоматического обновления.
@@ -1239,14 +1238,21 @@ def main():
                         text = re.sub(r'\s+', ' ', text)
                         ir_metrics = extract_metrics(text, scope=bank_def.get("scope"))
                         # Ищем PDF ссылки
-                        base_domain = re.match(r'https?://[^/]+', ir_url)
-                        base = base_domain.group(0) if base_domain else ""
+                        # ИСПРАВЛЕНО 15.07.2026: раньше здесь было "base = ...",
+                        # что ЗАТИРАЛО base = bank_def["base"] (строка 1222,
+                        # словарь с ROE/H20 банка) строкой-доменом IR-ссылки.
+                        # Дальше по коду calc_rorwa(base.get("roe"), ...) падал
+                        # с AttributeError: 'str' object has no attribute 'get'
+                        # — на КАЖДОМ банке с ir_urls, то есть практически всегда.
+                        # Именно это гарантированно роняло весь агент с 12.07.
+                        ir_base_domain = re.match(r'https?://[^/]+', ir_url)
+                        ir_domain = ir_base_domain.group(0) if ir_base_domain else ""
                         pdf_links = re.findall(r'href=["\']([^"\']+\.pdf[^"\']*)["\']|href=["\']([^"\']+msfo[^"\']*)["\']i', html, re.I)
                         for groups in pdf_links[:3]:
                             link = next((g for g in groups if g), None)
                             if not link: continue
-                            if link.startswith("/"): link = base + link
-                            elif not link.startswith("http"): link = base + "/" + link
+                            if link.startswith("/"): link = ir_domain + link
+                            elif not link.startswith("http"): link = ir_domain + "/" + link
                             if ".pdf" in link.lower():
                                 pdf_bytes = fetch_binary(link)
                                 if pdf_bytes and len(pdf_bytes) > 5000:
