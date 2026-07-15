@@ -364,8 +364,14 @@ function renderKPI(){
     : (DATA.pf_escrow_trn && DATA.pf_total_trn) ? (DATA.pf_escrow_trn/DATA.pf_total_trn*100) : null;
   document.getElementById('k-coverage').textContent = coverageVal!=null ? coverageVal.toFixed(1)+'%' : '—';
   const covSub = document.getElementById('k-coverage-sub');
-  if(DATA.pf_escrow_trn!=null && DATA.pf_total_trn!=null){
-    covSub.textContent = DATA.pf_escrow_trn.toFixed(1)+' трлн / '+DATA.pf_total_trn.toFixed(1)+' трлн';
+  if(DATA.pf_coverage_sys!=null){
+    // Официальная цифра ЦБ РФ — НЕ пересчитывается из эскроу/портфель
+    // (методология ЦБ иная, наивное деление даёт другое число).
+    const qoq = DATA.pf_coverage_sys_qoq_pp;
+    const trendStr = qoq!=null ? ' · ' + (qoq>0?'+':'') + qoq.toFixed(1) + ' п.п. к/к' : '';
+    covSub.textContent = 'офиц. ЦБ РФ' + (DATA.pf_escrow_trn ? ' · эскроу ' + DATA.pf_escrow_trn.toFixed(1) + ' трлн' : '') + trendStr;
+  } else if(DATA.pf_escrow_trn!=null && DATA.pf_total_trn!=null){
+    covSub.textContent = DATA.pf_escrow_trn.toFixed(1)+' трлн / '+DATA.pf_total_trn.toFixed(1)+' трлн (расчёт)';
   } else {
     covSub.textContent = 'эскроу / портфель ПФ';
   }

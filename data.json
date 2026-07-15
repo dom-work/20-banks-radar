@@ -698,6 +698,9 @@
   "pf_source_url": "https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf",
   "concept": "ТОП-20 банков по портфелю ПФ, ранжированных по активам",
   "pf_cbr_page": "https://cbr.ru/statistics/bank_sector/equity_const_financing/",
-  "pf_escrow_trn": 7.3,
-  "pf_coverage_sys": 71.0
+  "pf_escrow_trn": 7.4,
+  "pf_coverage_sys": 68.0,
+  "pf_coverage_sys_qoq_pp": -1.0,
+  "pf_coverage_sys_yoy_pp": -4.3,
+  "pf_coverage_sys_note": "Первоисточник: ЦБ РФ, «О проектном финансировании строительства жилья в I квартале 2026 года», слайд 5 (https://cbr.ru/Collection/Collection/File/62038/pf_1Q2026.pdf). Средства на эскроу 7.4 трлн руб. на 01.04.26, покрытие задолженности 68% (-1.0 п.п. к/к, -4.3 п.п. г/г). Это готовое значение ЦБ, НЕ пересчитывать как эскроу/портфель_ПФ — методология ЦБ шире (полная задолженность застройщиков, не только наш портфель ПФ)."
 }
