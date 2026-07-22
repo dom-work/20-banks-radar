@@ -25,6 +25,15 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 .theme-toggle:hover{border-color:var(--green);background:var(--green-bg)}
 .main{max-width:1360px;margin:0 auto;padding:20px 16px}
 .kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px}
+.period-bar{max-width:1400px;margin:0 auto;padding:14px 24px 6px;display:flex;flex-direction:column;gap:6px}
+.period-bar-label{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--text2)}
+.period-archive-badge{background:#FFF4E5;color:#E65100;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700}
+.period-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:4px;background:var(--border);outline:none;cursor:pointer}
+.period-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--green);cursor:pointer;border:3px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.period-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--green);cursor:pointer;border:3px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.period-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);padding:0 2px}
+.period-tick{cursor:help;user-select:none}
+.period-tick.active{color:var(--green);font-weight:700}
 .kpi{background:var(--surface);border-radius:14px;padding:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border);position:relative;overflow:hidden;transition:box-shadow .2s}
 .kpi:hover{box-shadow:var(--shadow)}
 .kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
@@ -160,6 +169,15 @@ tr:hover td{background:var(--row-hover)}
     <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Переключить тему">🌙</button>
   </div>
 </header>
+
+<div class="period-bar" id="period-bar">
+  <div class="period-bar-label" title="Ретро-периоды. Модель смешанная: часть банков раскрывает данные накопленным итогом (6М/9М), часть — только за отдельный квартал. Точный периметр каждой цифры — в источнике строки банка. Наведите на засечки ниже для пояснения по каждому периоду.">
+    <span id="period-current">Live · последние данные</span>
+    <span class="period-archive-badge" id="period-archive-badge" style="display:none">📅 архив</span>
+  </div>
+  <input type="range" id="period-slider" min="0" max="5" step="1" value="5" class="period-slider">
+  <div class="period-ticks" id="period-ticks"></div>
+</div>
 
 <main class="main">
   <div class="kpi-row">
@@ -327,25 +345,102 @@ function toggleTheme(){
 })();
 
 // ── ДАННЫЕ ────────────────────────────────────────────────────────────
-let DATA=null, filterType='all', sortType='rank', feedFilter='all';
+let DATA=null, HISTORY=null, filterType='all', sortType='rank', feedFilter='all';
+let activePeriod='live'; // 'live' | ключ периода из HISTORY.periods
 
 async function loadData(){
   try{
     const r = await fetch('data.json?t='+Date.now());
     if(!r.ok) throw new Error('HTTP '+r.status);
     DATA = await r.json();
-    render();
-  } catch(e){ console.error('Load error:',e); }
+  } catch(e){ console.error('Load error (data.json):',e); }
+  try{
+    // data_history.json — ОТДЕЛЬНЫЙ файл, агент update_data.py его никогда
+    // не трогает (см. пояснение в самом файле). Если файла ещё нет —
+    // страница просто работает в режиме live, слайдер прячется.
+    const rh = await fetch('data_history.json?t='+Date.now());
+    if(rh.ok) HISTORY = await rh.json();
+  } catch(e){ console.warn('Load warn (data_history.json):',e); }
+  initPeriodSlider();
+  render();
+}
+
+// Тексты тултипов засечек слайдера. Модель ретро-данных СМЕШАННАЯ:
+// часть банков раскрывает показатели накопленным итогом (6М/9М),
+// часть — только за отдельный квартал (2К/3К/4К standalone). Метки на
+// засечках короткие, полное описание периметра — здесь, по наведению.
+// Ключи должны совпадать с HISTORY.periods. Live — отдельный ключ.
+const PERIOD_TOOLTIPS = {
+  "1кв2025": "1 квартал 2025. У всех банков — первый отчётный период, данные сопоставимы между собой.",
+  "2кв2025": "Смешанный периметр. РСХБ, МКБ, ДОМ.РФ — 6 мес. накопленным итогом; Совкомбанк, БСПБ — только 2-й квартал (standalone). Сравнивать между банками с осторожностью.",
+  "3кв2025": "Смешанный периметр. ГПБ, РСХБ, ДОМ.РФ — 9 мес. накопленным итогом; Совкомбанк, БСПБ — только 3-й квартал (standalone).",
+  "4кв2025": "4-й квартал изолированно (Сбер, ВТБ, Совкомбанк, БСПБ). ДОМ.РФ поквартально не раскрывает — его годовое значение см. на засечке «Весь 2025».",
+  "2025":    "Полный 2025 год, годовая МСФО-отчётность. Наиболее сопоставимый период между банками.",
+  "live":    "Актуальные данные (последний прогон агента). Точный отчётный период каждого банка — в источнике строки."
+};
+
+function initPeriodSlider(){
+  const bar = document.getElementById('period-bar');
+  if(!HISTORY || !HISTORY.periods || !HISTORY.periods.length){
+    bar.style.display='none';
+    return;
+  }
+  const periods = HISTORY.periods; // напр. ["1кв2025","2кв2025","3кв2025","4кв2025","2025"]
+  const slider = document.getElementById('period-slider');
+  slider.max = periods.length; // последнее деление = live
+  slider.value = periods.length;
+  const ticks = document.getElementById('period-ticks');
+  ticks.innerHTML = periods.map((p,i)=>{
+    const tip = PERIOD_TOOLTIPS[p] || (HISTORY.period_labels?.[p]||p);
+    return `<span class="period-tick" data-i="${i}" title="${tip}" onclick="setPeriodByIndex(${i})">${HISTORY.period_labels?.[p]||p}</span>`;
+  }).join('') + `<span class="period-tick" data-i="${periods.length}" title="${PERIOD_TOOLTIPS.live}" onclick="setPeriodByIndex(${periods.length})">Live</span>`;
+
+  slider.addEventListener('input', ()=>{
+    const idx = parseInt(slider.value,10);
+    setPeriodByIndex(idx, false);
+  });
+}
+
+function setPeriodByIndex(idx, moveSlider=true){
+  const periods = HISTORY.periods;
+  if(moveSlider) document.getElementById('period-slider').value = idx;
+  activePeriod = (idx>=periods.length) ? 'live' : periods[idx];
+  document.querySelectorAll('.period-tick').forEach(el=>{
+    el.classList.toggle('active', parseInt(el.dataset.i,10)===idx);
+  });
+  const badge = document.getElementById('period-archive-badge');
+  const label = document.getElementById('period-current');
+  if(activePeriod==='live'){
+    badge.style.display='none';
+    label.textContent = 'Live · последние данные';
+  } else {
+    badge.style.display='inline-block';
+    const d = HISTORY.data[activePeriod];
+    label.textContent = 'Архив: ' + (HISTORY.period_labels?.[activePeriod]||activePeriod)
+      + (d?.source_note ? ' · ' + d.source_note : '');
+  }
+  render();
+}
+
+// Возвращает данные активного периода (live DATA либо срез из HISTORY)
+function getActiveData(){
+  if(activePeriod==='live' || !HISTORY) return DATA;
+  return HISTORY.data[activePeriod] || DATA;
 }
 
 function render(){
-  if(!DATA) return;
-  renderKPI(); renderMatrix(); renderSignals(); renderPanel();
-  document.getElementById('upd-time').textContent = DATA.updated_at || DATA.updated || '—';
+  const D = getActiveData();
+  if(!D) return;
+  renderKPI(D); renderMatrix(D);
+  if(activePeriod==='live'){ renderSignals(); renderPanel(); }
+  document.getElementById('upd-time').textContent =
+    activePeriod==='live' ? (DATA.updated_at || DATA.updated || '—')
+                           : (HISTORY.period_labels?.[activePeriod]||activePeriod);
 }
 
-function renderKPI(){
-  const k = DATA.kpi||{};
+function renderKPI(D){
+  D = D || DATA;
+  const k = D.kpi||{};
   document.getElementById('k-roe').textContent   = k.median_roe ? k.median_roe+'%' : '—';
   document.getElementById('k-rorwa').textContent = k.leader_rorwa_val ? k.leader_rorwa_val+'%' : '—';
   document.getElementById('k-rorwa-sub').textContent = k.leader_rorwa_bank||'—';
@@ -353,25 +448,25 @@ function renderKPI(){
   document.getElementById('k-cir-sub').textContent  = k.best_cir_pf_bank||'—';
   document.getElementById('k-h20').textContent   = k.min_h20_val ? k.min_h20_val+'%' : '—';
   document.getElementById('k-h20-sub').textContent  = k.min_h20_bank||'—';
-  document.getElementById('k-pf').textContent    = DATA.pf_total_trn ? DATA.pf_total_trn.toFixed(1)+' трлн' : (k.dom_rf_pf_portfolio||'—');
+  document.getElementById('k-pf').textContent    = D.pf_total_trn ? D.pf_total_trn.toFixed(1)+' трлн' : '—';
   const pfSub = document.getElementById('k-pf-sub');
-  if(DATA.pf_source_url){
-    pfSub.innerHTML = DATA.pf_source ? '<a href="'+DATA.pf_source_url+'" target="_blank" style="color:var(--blue)">'+DATA.pf_source+' ↗</a>' : 'ЦБ РФ · эскроу';
+  if(D.pf_source_url){
+    pfSub.innerHTML = D.pf_source ? '<a href="'+D.pf_source_url+'" target="_blank" style="color:var(--blue)">'+D.pf_source+' ↗</a>' : 'ЦБ РФ · эскроу';
   } else {
-    pfSub.textContent = DATA.pf_source || 'ЦБ РФ · эскроу';
+    pfSub.textContent = D.pf_source || 'ЦБ РФ · эскроу';
   }
-  const coverageVal = DATA.pf_coverage_sys!=null ? DATA.pf_coverage_sys
-    : (DATA.pf_escrow_trn && DATA.pf_total_trn) ? (DATA.pf_escrow_trn/DATA.pf_total_trn*100) : null;
+  const coverageVal = D.pf_coverage_sys!=null ? D.pf_coverage_sys
+    : (D.pf_escrow_trn && D.pf_total_trn) ? (D.pf_escrow_trn/D.pf_total_trn*100) : null;
   document.getElementById('k-coverage').textContent = coverageVal!=null ? coverageVal.toFixed(1)+'%' : '—';
   const covSub = document.getElementById('k-coverage-sub');
-  if(DATA.pf_coverage_sys!=null){
+  if(D.pf_coverage_sys!=null){
     // Официальная цифра ЦБ РФ — НЕ пересчитывается из эскроу/портфель
     // (методология ЦБ иная, наивное деление даёт другое число).
-    const qoq = DATA.pf_coverage_sys_qoq_pp;
+    const qoq = D.pf_coverage_sys_qoq_pp;
     const trendStr = qoq!=null ? ' · ' + (qoq>0?'+':'') + qoq.toFixed(1) + ' п.п. к/к' : '';
-    covSub.textContent = 'офиц. ЦБ РФ' + (DATA.pf_escrow_trn ? ' · эскроу ' + DATA.pf_escrow_trn.toFixed(1) + ' трлн' : '') + trendStr;
-  } else if(DATA.pf_escrow_trn!=null && DATA.pf_total_trn!=null){
-    covSub.textContent = DATA.pf_escrow_trn.toFixed(1)+' трлн / '+DATA.pf_total_trn.toFixed(1)+' трлн (расчёт)';
+    covSub.textContent = 'офиц. ЦБ РФ' + (D.pf_escrow_trn ? ' · эскроу ' + D.pf_escrow_trn.toFixed(1) + ' трлн' : '') + trendStr;
+  } else if(D.pf_escrow_trn!=null && D.pf_total_trn!=null){
+    covSub.textContent = D.pf_escrow_trn.toFixed(1)+' трлн / '+D.pf_total_trn.toFixed(1)+' трлн (расчёт)';
   } else {
     covSub.textContent = 'эскроу / портфель ПФ';
   }
@@ -386,7 +481,8 @@ function cH(v){return !v?'vn':v>=13?'vg':v>=11?'vw':'vr'}
 function fv(v,e){ if(v===null||v===undefined) return '<span class="vn">—</span>'; return v.toFixed(1)+'%'+(e?'<sup class="est">~</sup>':''); }
 
 function renderMatrix(){
-  let banks=[...(DATA.banks||[])];
+  const D = getActiveData();
+  let banks=[...(D.banks||[])];
   if(filterType==='state')   banks=banks.filter(b=>b.tp==='state');
   if(filterType==='private') banks=banks.filter(b=>b.tp==='private'||b.tp==='foreign');
   if(filterType==='listed')  banks=banks.filter(b=>b.pub);
