@@ -1,6 +1,6 @@
 {
-  "updated": "22.07.2026",
-  "updated_at": "22.07.2026 20:00 МСК",
+  "updated": "23.07.2026",
+  "updated_at": "23.07.2026 15:12 МСК",
   "kpi": {
     "median_roe": 21.1,
     "leader_rorwa_bank": "Совкомбанк",
@@ -25,7 +25,7 @@
       "cor": 0.56,
       "h20": 14.6,
       "rorwa": 3.53,
-      "src": "IR 22.07.2026",
+      "src": "IR 23.07.2026",
       "period": "2025",
       "re": 0,
       "ne": 0,
@@ -44,7 +44,7 @@
         "period": "2025"
       },
       "latest": {
-        "src": "IR 22.07.2026",
+        "src": "IR 23.07.2026",
         "roe": 24.2,
         "nim": 5.44,
         "cir": 30.3,
@@ -52,6 +52,7 @@
       },
       "pf_share": 40.0,
       "pf_trn": 3.48,
+      "pf_portfolio": 3.48,
       "asset_rank": 1
     },
     {
@@ -68,7 +69,7 @@
       "cor": 1.0,
       "h20": 13.5,
       "rorwa": 3.21,
-      "src": "МСФО Банк ДОМ.РФ 1кв.2026 (не группа)",
+      "src": "МСФО Банк ДОМ.РФ 1кв.2026 (временно; TODO пересчитать под группу когда выйдет МСФО группы 1кв.2026)",
       "period": "1кв2026",
       "re": 0,
       "ne": 0,
@@ -83,12 +84,13 @@
         "cor": 1.0,
         "h20": 13.5,
         "rorwa": 3.21,
-        "src": "МСФО Банк ДОМ.РФ 1кв.2026 (не группа)",
+        "src": "МСФО Банк ДОМ.РФ 1кв.2026 (временно; TODO пересчитать под группу когда выйдет МСФО группы 1кв.2026)",
         "period": "1кв2026"
       },
       "latest": null,
       "pf_share": 17.0,
       "pf_trn": 1.48,
+      "pf_portfolio": 1.48,
       "asset_rank": 9
     },
     {
@@ -99,13 +101,13 @@
       "tp": "state",
       "pub": 1,
       "pf": 1,
-      "roe": 16.5,
-      "nim": 3.8,
-      "cir": 50.4,
-      "cor": 0.7,
+      "roe": 19.2,
+      "nim": 2.5,
+      "cir": 38.6,
+      "cor": 0.9,
       "h20": 10.7,
-      "rorwa": 1.77,
-      "src": "IR 22.07.2026",
+      "rorwa": 2.05,
+      "src": "IR 23.07.2026",
       "period": "1кв2026",
       "re": 0,
       "ne": 0,
@@ -124,14 +126,12 @@
         "period": "1кв2026"
       },
       "latest": {
-        "src": "IR 22.07.2026",
-        "roe": 16.5,
-        "nim": 3.8,
-        "cir": 50.4,
-        "cor": 0.7
+        "src": "IR 23.07.2026",
+        "cor": 0.9
       },
       "pf_share": 14.0,
       "pf_trn": 1.22,
+      "pf_portfolio": 1.22,
       "asset_rank": 2
     },
     {
@@ -169,6 +169,7 @@
       "latest": null,
       "pf_share": 6.0,
       "pf_trn": 0.52,
+      "pf_portfolio": 0.52,
       "asset_rank": 3
     },
     {
@@ -206,6 +207,7 @@
       "latest": null,
       "pf_share": 4.0,
       "pf_trn": 0.35,
+      "pf_portfolio": 0.35,
       "asset_rank": 4
     },
     {
@@ -243,6 +245,7 @@
       "latest": null,
       "pf_share": 3.0,
       "pf_trn": 0.26,
+      "pf_portfolio": 0.26,
       "asset_rank": 10
     },
     {
@@ -280,6 +283,7 @@
       "latest": null,
       "pf_share": 2.0,
       "pf_trn": 0.18,
+      "pf_portfolio": 0.18,
       "asset_rank": 5
     },
     {
@@ -323,6 +327,7 @@
       },
       "pf_share": 1.0,
       "pf_trn": 0.09,
+      "pf_portfolio": 0.09,
       "asset_rank": 6
     },
     {
@@ -366,6 +371,7 @@
       },
       "pf_share": 1.0,
       "pf_trn": 0.09,
+      "pf_portfolio": 0.09,
       "asset_rank": 8
     },
     {
@@ -409,6 +415,7 @@
       },
       "pf_share": 0.5,
       "pf_trn": 0.04,
+      "pf_portfolio": 0.04,
       "asset_rank": 13
     },
     {
@@ -425,7 +432,7 @@
       "cor": 5.9,
       "h20": 12.0,
       "rorwa": 1.7,
-      "src": "IR 22.07.2026",
+      "src": "IR 23.07.2026",
       "period": "2025",
       "re": 0,
       "ne": 0,
@@ -444,7 +451,7 @@
         "period": "2025"
       },
       "latest": {
-        "src": "IR 22.07.2026",
+        "src": "IR 23.07.2026",
         "roe": 14.2,
         "nim": 8.5,
         "cir": 35.1,
@@ -452,6 +459,7 @@
       },
       "pf_share": 0.5,
       "pf_trn": 0.04,
+      "pf_portfolio": 0.04,
       "asset_rank": 14
     },
     {
@@ -489,6 +497,7 @@
       "latest": null,
       "pf_share": 0.3,
       "pf_trn": 0.03,
+      "pf_portfolio": 0.03,
       "asset_rank": 17
     },
     {
@@ -526,6 +535,7 @@
       "latest": null,
       "pf_share": 0.2,
       "pf_trn": 0.02,
+      "pf_portfolio": 0.02,
       "asset_rank": 15
     },
     {
@@ -563,6 +573,7 @@
       "latest": null,
       "pf_share": 0.2,
       "pf_trn": 0.02,
+      "pf_portfolio": 0.02,
       "asset_rank": 16
     },
     {
@@ -606,6 +617,7 @@
       },
       "pf_share": null,
       "pf_trn": null,
+      "pf_portfolio": null,
       "asset_rank": 7
     },
     {
@@ -643,6 +655,7 @@
       "latest": null,
       "pf_share": null,
       "pf_trn": null,
+      "pf_portfolio": null,
       "asset_rank": 11
     },
     {
@@ -684,6 +697,7 @@
       },
       "pf_share": null,
       "pf_trn": null,
+      "pf_portfolio": null,
       "asset_rank": 12
     },
     {
@@ -721,6 +735,7 @@
       "latest": null,
       "pf_share": null,
       "pf_trn": null,
+      "pf_portfolio": null,
       "asset_rank": 18
     },
     {
@@ -758,6 +773,7 @@
       "latest": null,
       "pf_share": null,
       "pf_trn": null,
+      "pf_portfolio": null,
       "asset_rank": 19
     }
   ],
@@ -774,7 +790,7 @@
         "iRoRWA",
         "лидер"
       ],
-      "time": "22.07.2026"
+      "time": "23.07.2026"
     },
     {
       "bank": "ВТБ",
@@ -789,7 +805,7 @@
         "капитал",
         "риск"
       ],
-      "time": "22.07.2026"
+      "time": "23.07.2026"
     },
     {
       "bank": "Банк ДОМ.РФ",
@@ -804,10 +820,10 @@
         "ПФ",
         "эффективность"
       ],
-      "time": "22.07.2026"
+      "time": "23.07.2026"
     }
   ],
-  "summary": "Данные обновлены 22.07.2026. Медиана ROE ТОП-20: 21.1%. Лидер iRoRWA: Совкомбанк (5.85%). Мин. буфер капитала: ВТБ (H20.0=10.7%).",
+  "summary": "Данные обновлены 23.07.2026. Медиана ROE ТОП-20: 21.1%. Лидер iRoRWA: Совкомбанк (5.85%). Мин. буфер капитала: ВТБ (H20.0=10.7%).",
   "insights": [
     {
       "icon": "▲",
