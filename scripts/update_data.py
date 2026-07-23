@@ -1203,6 +1203,15 @@ def update_pf_data(banks: list) -> list:
         b["pf"]         = 1 if pf_info.get("pf_share", 0) > 0 else 0
         b["pf_share"]   = pf_info.get("pf_share")
         b["pf_trn"]     = pf_info.get("pf_trn")
+        # ИСПРАВЛЕНО 23.07.2026: фронт (index.html) читает поле pf_portfolio,
+        # а агент писал только pf_trn — из-за рассинхрона имён колонка
+        # "Портфель ПФ" в матрице была ВСЕГДА пустой в live-режиме.
+        # Пишем оба имени: pf_trn (историческое) и pf_portfolio (для фронта).
+        # NB: pf_escrow и pf_coverage по банкам агент не собирает вовсе —
+        # источника с разбивкой эскроу по банкам нет (ЦБ даёт только агрегат).
+        # Эти две колонки заполняются вручную в data_history.json там,
+        # где банк раскрывает цифры сам (см. Банк ДОМ.РФ).
+        b["pf_portfolio"] = pf_info.get("pf_trn")
         b["asset_rank"] = pf_info.get("asset_rank", b.get("r", 99))
     
     # Сортируем по доле ПФ
