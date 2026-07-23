@@ -2,33 +2,32 @@ name: Банковский Радар · Агент обновления PDF
 
 on:
   schedule:
-    - cron: '0 6 * * *'      # 09:00 МСК
-    - cron: '0 12 * * *'     # 15:00 МСК
-    - cron: '0 18 25-31 * *' # 21:00 МСК (конец месяца)
-  workflow_dispatch:
+    # Время сдвинуто с круглых часов (:00) на :17 — на бесплатном плане
+    # GitHub Actions чаще пропускает прогоны, запланированные ровно на
+    # "круглый час" (00:00 UTC и т.п.), т.к. это пик нагрузки. Смещение
+    # на нечётные минуты заметно снижает вероятность пропуска.
+    - cron: '17 6 * * *'      # 09:17 МСК (было 09:00)
+    - cron: '17 12 * * *'     # 15:17 МСК (было 15:00)
+    - cron: '17 18 25-31 * *' # 21:17 МСК, конец месяца (было 21:00)
+  workflow_dispatch:          # ручной запуск кнопкой "Run workflow"
 
 jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Install dependencies
         run: pip install pdfplumber requests openpyxl
-
       - name: Run update agent
         env:
           CF_API_TOKEN:  ${{ secrets.CF_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
         run: python scripts/update_data.py
-
       - name: Commit if changed
         run: |
           git config user.name  "github-actions[bot]"
